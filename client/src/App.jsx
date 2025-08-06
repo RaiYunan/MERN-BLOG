@@ -1,14 +1,27 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 import { Button } from './components/ui/button'
 import Layout from './Layout/Layout'
 
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [data,setData]=useState("");
+
+  useEffect(()=>{
+    axios.get("http://localhost:8000/api/data")
+    .then((res)=>{
+      console.log(res.data);
+      setData(res.data.message);
+    }).catch((err)=>{
+      console.log("Error while fetching data",err);
+    })
+
+  })
 
   return (
     <>
-    <Layout/>
+    {/* <Layout/> */}
+    <div>{data}</div>
      
       
     </>
