@@ -1,30 +1,22 @@
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { Button } from './components/ui/button'
+import React from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Layout from './Layout/Layout'
+import { RouteIndex } from './helpers/RouteName'
+import Index from './pages'
 
-
-function App() {
-  const [data,setData]=useState("");
-
-  useEffect(()=>{
-    axios.get("http://localhost:8000/api/data")
-    .then((res)=>{
-      console.log(res.data);
-      setData(res.data.message);
-    }).catch((err)=>{
-      console.log("Error while fetching data",err);
-    })
-
-  })
-
+const App = () => {
   return (
-    <>
-    {/* <Layout/> */}
-    <div>{data}</div>
-     
-      
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path={RouteIndex} element={<Layout/>}>
+          <Route index element={<Index/>}/>
+        
+        </Route>
+
+
+      </Routes>
+    
+    </BrowserRouter>
   )
 }
 
