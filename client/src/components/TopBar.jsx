@@ -5,6 +5,7 @@ import { Button } from './ui/button'
 import { FaSignInAlt } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import SearchBox from './SearchBox';
+import { RouteSignIn } from '@/helpers/RouteName';
 
 
 const TopBar = () => {
@@ -18,7 +19,7 @@ const TopBar = () => {
       </div>
       <div className='px-4'>
         <Button asChild>
-          <Link to="/signin" className='rounded-md'>
+          <Link to={RouteSignIn} className='rounded-md'>
            <FaSignInAlt />
            Sign In
            </Link>

@@ -17,6 +17,7 @@ import { FaBlogger } from "react-icons/fa6";
 import { FaComments } from "react-icons/fa";
 import { FaUsers } from "react-icons/fa";
 import { GoDotFill } from "react-icons/go";
+import { RouteIndex } from "@/helpers/RouteName";
 
 
 
@@ -35,7 +36,7 @@ const AppSideBar = () => {
             <SidebarMenuItem>
               <SidebarMenuButton>
                 <IoHome />
-                <Link to="">Home</Link>
+                <Link to={RouteIndex}>Home</Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
 
