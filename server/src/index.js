@@ -1,38 +1,38 @@
+console.log(">>> Running index.js");
+
 import express from "express"
 import dotenv from "dotenv"
 import cors from "cors"
 import cookieParser from "cookie-parser"
+import { connectDb } from "./db/index.js";
 
 dotenv.config({
     path:"./.env"
 });
 
-const app=express();
-const port=process.env.PORT
+const app = express();
+const port = process.env.PORT || 8000;
 
 app.use(cookieParser());
-
 app.use(cors({
-    origin:process.env.CLIENT_URL,
-    credentials:true
-}))
+    origin: process.env.CLIENT_URL,
+    credentials: true
+}));
 
-app.use(express.json({limit:"16kb"}));
-app.use(express.urlencoded({
-    extended:true,
-    limit:"16kb"
-}))
-app.use(express.static("public"));
 
 app.get("/", (req, res) => {
- res.json({
-    name:"Yunan Rai",
-    age:18,
- })
+  res.send("Yunan Rai");
 });
 
 
-app.listen(port,()=>{
-console.log("Server running on ", port);
 
+connectDb()
+.then(() => {
+    app.listen(port, () => {
+        console.log(`Server running on http://localhost:${port}`);
+    });
 })
+.catch((err) => {
+    console.log(" MONGODB Connection failed:", err);
+    process.exit(1);
+});
