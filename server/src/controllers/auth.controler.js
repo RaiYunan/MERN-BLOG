@@ -18,8 +18,14 @@ export const registerUser=asyncHandler(async(req,res)=>{
         password
     })
 
+    console.log("User Details:\n",user)
+
     res.status(200).json(
         new ApiResponse(200,user,"User registered successfully!!")
     )
 
+})
+
+export const loginUser=asyncHandler(async(req,res)=>{
+   //code to be written
 })

@@ -42,4 +42,5 @@ connectDb()
     process.exit(1);
 });
 
-app.post("/register",registerUser);
+import authRouter from "./routes/auth.routes.js"
+app.use("/api/v1/users",authRouter)

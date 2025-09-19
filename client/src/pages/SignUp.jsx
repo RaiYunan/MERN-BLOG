@@ -13,21 +13,23 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Card } from "@/components/ui/card";
-import { Link } from "react-router-dom";
-import { RouteSignIn, RouteSignUp } from '@/helpers/RouteName';
+import { Link,useNavigate } from "react-router-dom";
+import { RouteSignIn} from '@/helpers/RouteName';
 
 
 
 const SignUp = () => {
+  const navigate=useNavigate();
+
   const formSchema = z.object({
-  name: z.string().min(10, "Name must be at least 10 characters long"),
-  email: z.string().email(),
+  name: z.string().min(2, "Name must be at least 2 characters long.").max(100,"Name must be less than 100 characters long."),
+  email: z.string().email("Please enter a valid email address."),
   password: z.string().min(8, "Password must be at least 8 characters long"),
   confirmPassword: z.string()
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Password and Confirm Password must match",
-  path: ["confirmPassword"]
-});
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"]
+  });
 
 
   const form = useForm({
@@ -40,10 +42,31 @@ const SignUp = () => {
     },
   });
 
-  function onSubmit(values) {
+  async function onSubmit(values) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
+    try {
+      const url=`${import.meta.env.VITE_URL}/register`
+      const response=await fetch(url,{
+       method:"POST",
+       headers:{"Content-type":"application/json"},
+       body:JSON.stringify(values)
+      });
+
+      if(!response.ok){
+        alert("Error!!");
+      }else{
+        const data=await response.json();
+        console.log(data);
+        navigate(RouteSignIn);
+
+      }
+      
+
+      console.log(values);
+    } catch (error) {
+      
+    }
   }
 
 
@@ -59,7 +82,7 @@ const SignUp = () => {
               <div className="mb-3">
               <FormField
                 control={form.control}
-                name="password"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Name</FormLabel>
@@ -96,12 +119,12 @@ const SignUp = () => {
              <div className="mb-3">
               <FormField
                 control={form.control}
-                name="name"
+                name="password"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your password" {...field} />
+                      <Input type="password" placeholder="Enter your password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -117,7 +140,7 @@ const SignUp = () => {
                   <FormItem>
                     <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your password again" {...field} />
+                      <Input type="password" placeholder="Enter your password again" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
