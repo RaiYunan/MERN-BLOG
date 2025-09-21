@@ -43,4 +43,30 @@ connectDb()
 });
 
 import authRouter from "./routes/auth.routes.js"
+import { ApiError } from "./utils/ApiError.js";
 app.use("/api/v1/users",authRouter)
+
+// Global error middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+
+  // If ApiError
+  if (err instanceof ApiError) {
+    return res.status(err.statusCode).json({
+      statusCode: err.statusCode,
+      success: false,
+      message: err.message,
+      data: null,
+      errors: err.errors || []
+    });
+  }
+
+  // For any other error
+  res.status(500).json({
+    statusCode: 500,
+    success: false,
+    message: err.message || "Internal Server Error",
+    data: null,
+    errors: []
+  });
+});

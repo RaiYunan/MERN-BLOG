@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 import { Card } from "@/components/ui/card";
 import { Link,useNavigate } from "react-router-dom";
 import { RouteSignIn} from '@/helpers/RouteName';
+import { showToast } from '@/helpers/showToast';
 
 
 
@@ -43,29 +44,29 @@ const SignUp = () => {
   });
 
   async function onSubmit(values) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+    const {confirmPassword,...userData}=values
     try {
       const url=`${import.meta.env.VITE_URL}/register`
       const response=await fetch(url,{
        method:"POST",
        headers:{"Content-type":"application/json"},
-       body:JSON.stringify(values)
+       body:JSON.stringify(userData)
       });
 
+      const data=await response.json();
+
       if(!response.ok){
-        alert("Error!!");
-      }else{
-        const data=await response.json();
-        console.log(data);
-        navigate(RouteSignIn);
-
+        showToast("error",data.message)
+        return;
       }
-      
+      console.log(data);
+      navigate(RouteSignIn);
+      showToast("success",data.message);
 
-      console.log(values);
-    } catch (error) {
       
+    } catch (error) {
+      console.error(error);
+      showToast("error", "Something went wrong. Try again.");
     }
   }
 
