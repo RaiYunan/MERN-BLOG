@@ -13,10 +13,14 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Card } from "@/components/ui/card";
-import { Link } from "react-router-dom";
-import { RouteSignUp } from "@/helpers/RouteName";
+import { Link,useNavigate } from "react-router-dom";
+import { RouteIndex, RouteSignUp } from "@/helpers/RouteName";
+import { showToast } from "@/helpers/showToast";
+
+
 
 const SignIn = () => {
+  const navigate=useNavigate()
   const formSchema = z.object({
     email: z.string().email(),
     password: z.string().min(8, "Password msut be at least 8 characters long"),
@@ -30,10 +34,32 @@ const SignIn = () => {
     },
   });
 
-  function onSubmit(values) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values) {
+    try {
+      const url=`${import.meta.env.VITE_URL}/login`
+      const response=await fetch(url,
+        {
+          method:"POST",
+          headers:{"Content-type":"application/json"},
+          body:JSON.stringify(values),
+        }
+      )
+
+      console.log(response);
+      if(!response.ok){
+        console.log("Error while logging in")
+        showToast("error","Error while logging in.")
+      }
+
+      const data=await response.json();
+      console.log(data);
+      showToast("success","User logged in sucessfully")
+      navigate(RouteIndex);
+      
+      
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (

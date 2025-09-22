@@ -3,6 +3,23 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 
+const generateAccessRefreshToken=async(userId)=>{
+   try {
+     const user=await User.findById(userId)
+
+     const accessToken=await user.generateAccessToken
+     const refreshToken=await user.generateRefreshToken
+
+     user.refreshToken=refreshToken
+     await user.save({validateBeforeSave:false})
+     return {accessToken,refreshToken}
+   } catch (error) {
+    console.error(error);
+    throw new ApiError(400,"Something went wrong while generating Access and Refresh Tokens")
+    
+   }
+}
+
 export const registerUser=asyncHandler(async(req,res)=>{
     const {name,email,password}=req.body
 
@@ -30,5 +47,38 @@ export const registerUser=asyncHandler(async(req,res)=>{
 })
 
 export const loginUser=asyncHandler(async(req,res)=>{
-   //code to be written
+   const {email,password}=req.body;
+
+   const user=await User.findOne({email});
+
+   if(!user){
+    throw new ApiError(404,"No account found with this email. Please sign up to continue")
+   }
+
+   const isPasswordValid=await user.isPasswordCorrect(password)
+
+   if(!isPasswordValid){
+    throw new ApiError(400,"Password is Incorrect! Try again!!")
+   }
+
+   const {accessToken,refreshToken}=await generateAccessRefreshToken(user._id);
+
+   const loggedInUser=await User.findById(user._id).select("-password -refreshToken")
+
+   const options={
+    httpOnly:true,
+    secure:process.env.NODE_ENV==="production"
+   }
+
+   res.status(200)
+   .cookie("accessToken",accessToken,options)
+   .cookie("refreshToken",refreshToken,options)
+   .json(
+    new ApiResponse(
+        200,
+        loggedInUser,
+        "User logged in successfully."
+    )
+   )
+
 })
