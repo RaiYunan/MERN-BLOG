@@ -7,8 +7,8 @@ const generateAccessRefreshToken=async(userId)=>{
    try {
      const user=await User.findById(userId)
 
-     const accessToken=await user.generateAccessToken
-     const refreshToken=await user.generateRefreshToken
+     const accessToken=await user.generateAccessToken()
+     const refreshToken=await user.generateRefreshToken()
 
      user.refreshToken=refreshToken
      await user.save({validateBeforeSave:false})
@@ -67,7 +67,9 @@ export const loginUser=asyncHandler(async(req,res)=>{
 
    const options={
     httpOnly:true,
-    secure:process.env.NODE_ENV==="production"
+    secure:process.env.NODE_ENV==="production",
+    sameSite:process.env.NODE_ENV==="development"? "none":"strict",
+    path:"/"
    }
 
    res.status(200)

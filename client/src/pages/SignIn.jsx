@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import React from "react";
-import { z } from "zod";
+import { includes, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Card } from "@/components/ui/card";
@@ -41,24 +41,28 @@ const SignIn = () => {
         {
           method:"POST",
           headers:{"Content-type":"application/json"},
+          credentials:"include",
           body:JSON.stringify(values),
         }
       )
 
+      const data=await response.json();
+
       console.log(response);
       if(!response.ok){
-        console.log("Error while logging in")
-        showToast("error","Error while logging in.")
+        console.log("Error while logging in",data)
+        showToast("error",data.message);
+        return;
       }
 
-      const data=await response.json();
+      
       console.log(data);
       showToast("success","User logged in sucessfully")
       navigate(RouteIndex);
       
       
     } catch (error) {
-      console.error(error)
+      showToast("error",error.message)
     }
   }
 
