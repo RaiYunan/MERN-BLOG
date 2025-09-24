@@ -16,6 +16,7 @@ import { Card } from "@/components/ui/card";
 import { Link,useNavigate } from "react-router-dom";
 import { RouteSignIn} from '@/helpers/RouteName';
 import { showToast } from '@/helpers/showToast';
+import GoogleLogin from '@/components/GoogleLogin';
 
 
 
@@ -72,11 +73,19 @@ const SignUp = () => {
 
 
   return (
-   <div className="flex items-center justify-center h-screen w-screen">
-      <Card className="w-[400px] p-5">
-        <h1 className="text-2xl font-bold text-center mb-5">
+   <div className="flex items-center justify-center min-h-screen w-screen pt-6">
+      <Card className="w-[400px] p-5 ">
+        <h1 className="text-2xl font-bold text-center">
           Create your account
         </h1>
+        <div className=''>
+          <GoogleLogin/>
+          <div className='border flex justify-center items-center mt-5'>
+            <span className='absolute bg-white text-sm '>Or</span>
+          </div>
+        </div>
+
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
 
@@ -149,11 +158,11 @@ const SignUp = () => {
               />
             </div>
 
-            <div className="mt-5">
+            <div className="mt-3">
               <Button type="submit" className="w-full">
                 Sign Up
               </Button>
-              <div className="flex gap-2 text-sm justify-center items-center my-5">
+              <div className="flex gap-1 text-sm justify-center items-center my-3">
                 <p>Already have an account?</p>
                 <Link
                   className="text-blue-600 hover:underline"
