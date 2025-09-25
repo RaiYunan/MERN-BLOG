@@ -84,3 +84,41 @@ export const loginUser=asyncHandler(async(req,res)=>{
    )
 
 })
+
+export const googleLogin=(asyncHandler(async(req,res,next)=>{
+    const {name,email,avatar}=req.body
+    let user
+    user=await User.findOne({email});
+
+    if(!user){
+        ///create new user
+        const password=Math.round(Math.random()*100000000)
+        const newUser=await User.create({
+            name,
+            email,
+            password,
+            avatar
+        })
+
+        user=await newUser.save()
+    }
+
+    const {accessToken,refreshToken}=await generateAccessRefreshToken(user._id)
+
+    const options={
+        httpOnly:true,
+        secure:process.env.NODE_ENV==="production",
+        sameSite:process.env.NODE_ENV==="development"?"none":"strict",
+        path:"/"
+    }
+
+    const loggedInUser=await User.findById(user._id).select("-password -refreshToken")
+    console.log(loggedInUser)
+
+    res.status(200)
+    .cookie("accessToken",accessToken,options)
+    .cookie("refreshToken",refreshToken,options)
+    .json(
+        new ApiResponse(200,loggedInUser,"User logged in Successfully.")
+    )
+}))
