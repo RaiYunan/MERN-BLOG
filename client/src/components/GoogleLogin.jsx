@@ -6,9 +6,12 @@ import { auth, provider } from '@/helpers/firebase';
 import { showToast } from '@/helpers/showToast';
 import { useNavigate } from 'react-router-dom';
 import { RouteIndex } from '@/helpers/RouteName';
+import { useDispatch } from 'react-redux';
+import { setUser } from '@/redux/user/user.slice';
 
 const GoogleLogin = () => {
   const navigate=useNavigate()
+  const dispatch=useDispatch()
     const handleLogin=async()=>{
         
         try {
@@ -34,12 +37,13 @@ const GoogleLogin = () => {
 
           const data=await response.json()
           if(!response.ok){
-            showToast("error",data.message||"Lado muji wrong vayo");
+            showToast("error",data.message||"Something is wrong.Try again");
             return;
           }
 
           showToast("success",data.message);
-          console.log(data);
+          console.log(data.data);
+          dispatch(setUser(data.data));
           navigate(RouteIndex,{replace:true});
 
         } catch (error) {

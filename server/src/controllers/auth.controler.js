@@ -33,7 +33,8 @@ export const registerUser=asyncHandler(async(req,res)=>{
     const user=await User.create({
         name,
         email,
-        password
+        password,
+        authProvider:"local",
     })
 
     const createdUser=await User.findById(user._id).select("-password")
@@ -52,7 +53,11 @@ export const loginUser=asyncHandler(async(req,res)=>{
    const user=await User.findOne({email});
 
    if(!user){
-    throw new ApiError(404,"No account found with this email. Please sign up to continue")
+    throw new ApiError(404,"No account found with this email. Please sign up to continue.")
+   }
+
+   if(user.authProvider==="google"){
+    throw new ApiError(400,"This account was created with Google. Please login with Google.")
    }
 
    const isPasswordValid=await user.isPasswordCorrect(password)
@@ -92,11 +97,11 @@ export const googleLogin=(asyncHandler(async(req,res,next)=>{
 
     if(!user){
         ///create new user
-        const password=Math.round(Math.random()*100000000)
         const newUser=await User.create({
             name,
             email,
-            password,
+            password:null,
+            authProvider:"google",
             avatar
         })
 

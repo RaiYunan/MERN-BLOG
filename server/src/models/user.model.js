@@ -31,14 +31,23 @@ const userSchema=new mongoose.Schema({
     password:{
         type:String,
         trim:true
+    },
+    authProvider:{
+        type:"string",
+        enum:["local","google"],
+        default:"local"
     }
 },{timestamps:true})
 
 
 userSchema.pre("save",async function(next){
     if(!this.isModified("password")) next();
-    this.password=await bcrypt.hash(this.password,10);
+    //only hash if password exists(Google users might not have a password)
+    if(this.password){
+        this.password=await bcrypt.hash(this.password,10);
+    }
     next()
+    
 })
 
 userSchema.methods.isPasswordCorrect=async function(password){
