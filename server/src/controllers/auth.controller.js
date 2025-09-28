@@ -73,7 +73,7 @@ export const loginUser=asyncHandler(async(req,res)=>{
    const options={
     httpOnly:true,
     secure:process.env.NODE_ENV==="production",
-    sameSite:process.env.NODE_ENV==="development"? "none":"strict",
+    sameSite:process.env.NODE_ENV==="production"? "none":"lax",
     path:"/"
    }
 
@@ -113,7 +113,7 @@ export const googleLogin=(asyncHandler(async(req,res,next)=>{
     const options={
         httpOnly:true,
         secure:process.env.NODE_ENV==="production",
-        sameSite:process.env.NODE_ENV==="development"?"none":"strict",
+        sameSite:process.env.NODE_ENV==="production"?"none":"lax",
         path:"/"
     }
 
@@ -127,3 +127,27 @@ export const googleLogin=(asyncHandler(async(req,res,next)=>{
         new ApiResponse(200,loggedInUser,"User logged in Successfully.")
     )
 }))
+
+export const logoutUser=asyncHandler(async(req,res,next)=>{
+     const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { $unset: { refreshToken: 1 } },
+      { new: true }
+);
+console.log("Updated User with RefreshToken Removed\n", updatedUser);
+    const options={
+        httpOnly:true,
+        secure:process.env.NODE_ENV==="production",
+        sameSite:process.env.NODE_ENV==="production"?"none":"lax",
+        path:"/"
+    }
+
+   return res.
+    status(200)
+    .clearCookie("accessToken",options)
+    .clearCookie("refreshToken",options)
+    .json(
+        new ApiResponse(200,{},"User logged out successfully...")
+    )
+
+})

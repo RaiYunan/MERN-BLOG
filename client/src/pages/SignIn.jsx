@@ -58,7 +58,7 @@ const SignIn = () => {
         showToast("error",data.message);
         return;
       }
-      console.log("lado kha muji",data.data);
+      console.log("before dispatch",data)
       dispatch(setUser(data))
       navigate(RouteIndex);
       showToast("success","User logged in sucessfully")

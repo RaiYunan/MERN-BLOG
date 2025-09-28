@@ -28,7 +28,7 @@ const GoogleLogin = () => {
 
           const response=await fetch(url,{
             method:"POST",
-            headers:{"content-type":"application/json"},
+            headers:{"Content-type":"application/json"},
             credentials:"include",
             body:JSON.stringify(bodyData)
 
@@ -42,7 +42,8 @@ const GoogleLogin = () => {
           }
 
           showToast("success",data.message);
-          console.log(data.data);
+          console.log("before dispatch data\n",data);
+          console.log("before dispatch data.data\n",data.data);
           dispatch(setUser(data.data));
           navigate(RouteIndex,{replace:true});
 

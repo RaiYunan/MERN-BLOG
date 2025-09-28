@@ -3,7 +3,6 @@ import dotenv from "dotenv"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 import { connectDb } from "./db/index.js";
-import { registerUser } from "./controllers/auth.controler.js";
 
 dotenv.config({
     path:"./.env"
