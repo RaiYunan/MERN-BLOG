@@ -5,7 +5,7 @@ import { Button } from './ui/button'
 import { FaSignInAlt } from "react-icons/fa";
 import { Link, useNavigate } from 'react-router-dom';
 import SearchBox from './SearchBox';
-import { RouteIndex, RouteSignIn } from '@/helpers/RouteName';
+import { RouteIndex, RouteProfile, RouteSignIn } from '@/helpers/RouteName';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -75,26 +75,26 @@ const TopBar = () => {
         </Button>)
         :
         <div className='cursor-pointer'>
-          <DropdownMenu>
+          <DropdownMenu >
   <DropdownMenuTrigger>
-    <Avatar>
+    <Avatar  className="cursor-pointer">
   <AvatarImage src={user.user.avatar || userImage} />
   <AvatarFallback>CN</AvatarFallback>
 </Avatar>
   </DropdownMenuTrigger>
   <DropdownMenuContent>
     <DropdownMenuLabel>
-      <p className='text-base'>{user.user.name}</p>
-      <p className='text-xs'>{user.user.email}</p>
+      <p className='text-base'>{user.user.name || user.user.data.name}</p>
+      <p className='text-xs'>{user.user.email || user.user.data.email}</p>
     </DropdownMenuLabel>
     <DropdownMenuSeparator />
-    <DropdownMenuItem asChild>
-      <Link to="">
+    <DropdownMenuItem asChild className="cursor-pointer">
+      <Link to={RouteProfile}>
       <FaRegUser />
       Profile
       </Link>
     </DropdownMenuItem>
-    <DropdownMenuItem asChild>
+    <DropdownMenuItem asChild className="cursor-pointer">
       <Link to="">
       <FaPlus/>
       Create Blog
@@ -102,7 +102,7 @@ const TopBar = () => {
     </DropdownMenuItem>
 
     <DropdownMenuSeparator/>
-    <DropdownMenuItem onClick={handleLogOut}>
+    <DropdownMenuItem className="cursor-pointer" onClick={handleLogOut}>
       <FiLogOut color='red'/>
       Logout
      
