@@ -28,6 +28,7 @@ const TopBar = () => {
   const user=useSelector((state)=>state.user)
   const navigate=useNavigate()
   const dispatch=useDispatch()
+  console.log(user.user.avatar)
 
   async function handleLogOut(){
     try {

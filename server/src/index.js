@@ -42,8 +42,10 @@ connectDb()
 });
 
 import authRouter from "./routes/auth.routes.js"
+import userRouter from "./routes/user.route.js"
 import { ApiError } from "./utils/ApiError.js";
-app.use("/api/v1/users",authRouter)
+app.use("/api/v1/auth",authRouter)
+app.use("/api/v1/users",userRouter)
 
 // Global error middleware
 app.use((err, req, res, next) => {

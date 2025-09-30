@@ -23,6 +23,7 @@ const GoogleLogin = () => {
             email:user.email,
             avatar:user.photoURL
           }
+          console.log(bodyData)
         
         const url=`${import.meta.env.VITE_URL}/google-login`
 
