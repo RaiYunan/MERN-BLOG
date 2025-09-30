@@ -47,7 +47,7 @@ const SignUp = () => {
   async function onSubmit(values) {
     const {confirmPassword,...userData}=values
     try {
-      const url=`${import.meta.env.VITE_URL}/register`
+      const url=`${import.meta.env.VITE_URL}/auth/register`
       const response=await fetch(url,{
        method:"POST",
        headers:{"Content-type":"application/json"},

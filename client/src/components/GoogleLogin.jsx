@@ -25,7 +25,7 @@ const GoogleLogin = () => {
           }
           console.log(bodyData)
         
-        const url=`${import.meta.env.VITE_URL}/google-login`
+        const url=`${import.meta.env.VITE_URL}/auth/google-login`
 
           const response=await fetch(url,{
             method:"POST",

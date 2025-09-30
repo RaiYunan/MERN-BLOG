@@ -20,14 +20,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { showToast } from '@/helpers/showToast';
 import userImage from "../assets/images/download.png"
 import { Textarea } from "@/components/ui/textarea"
+import { useFetch } from '@/hooks/useFetch.js';
 
 
 const Profile = () => {
+  const user=useSelector((state)=>state.user)
+console.log("redux user", user)
+console.log("calling API with id:", user.user._id)
+  const {data:userData,loading,error}=useFetch(`${import.meta.env.VITE_URL}/users/get-user/${user.user._id}`,{
+    method:"get",credentials:"include"
+  },[])
+  console.log("userData",userData)
     const dispatch=useDispatch()
     const navigate=useNavigate()
 
-    const user=useSelector((state)=>state.user)
-    console.log(user);
      const formSchema = z.object({
         name: z.string()
         .min(3, "Name must be at least 3 characters long")

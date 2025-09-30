@@ -32,7 +32,7 @@ const TopBar = () => {
 
   async function handleLogOut(){
     try {
-      const url=`${import.meta.env.VITE_URL}/logout`
+      const url=`${import.meta.env.VITE_URL}/auth/logout`
       const response = await fetch(url, {
          method: "POST",
          headers: { "Content-Type": "application/json" },

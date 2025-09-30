@@ -40,7 +40,7 @@ const SignIn = () => {
 
   async function onSubmit(values) {
     try {
-      const url=`${import.meta.env.VITE_URL}/login`
+      const url=`${import.meta.env.VITE_URL}/auth/login`
       const response=await fetch(url,
         {
           method:"POST",

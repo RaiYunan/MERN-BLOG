@@ -4,6 +4,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 
 export const getUser=asyncHandler(async(req,res,next)=>{
+    console.log("params:", req.params)
+
     const {userId}=req.params
 
     if (!userId){
