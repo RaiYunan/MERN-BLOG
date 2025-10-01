@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card'
-import React from 'react'
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import React, { useEffect } from 'react'
+import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -21,16 +21,20 @@ import { showToast } from '@/helpers/showToast';
 import userImage from "../assets/images/download.png"
 import { Textarea } from "@/components/ui/textarea"
 import { useFetch } from '@/hooks/useFetch.js';
+import Loading from '@/components/Loading';
+import { IoCameraOutline } from "react-icons/io5"
 
 
 const Profile = () => {
-  const user=useSelector((state)=>state.user)
-console.log("redux user", user)
-console.log("calling API with id:", user.user._id)
-  const {data:userData,loading,error}=useFetch(`${import.meta.env.VITE_URL}/users/get-user/${user.user._id}`,{
-    method:"get",credentials:"include"
-  },[])
-  console.log("userData",userData)
+    const user=useSelector((state)=>state.user)
+    const userId=user?.user?._id
+    const {data:userData,loading,error}=useFetch(userId?`${import.meta.env.VITE_URL}/users/get-user/${userId}`:null,{
+      method:"GET",credentials:"include"
+    },[])
+
+    
+    console.log("Redux user:", user);
+    console.log("Fetched userData:", userData);
     const dispatch=useDispatch()
     const navigate=useNavigate()
 
@@ -57,7 +61,17 @@ console.log("calling API with id:", user.user._id)
 
         },
       });
-    
+
+      useEffect(()=>{
+      if(userData && userData.success){
+         form.reset({
+          name:userData?.data.name,
+          email:userData?.data.email,
+          bio: userData?.data.bio
+        })
+      }
+
+      },[userData])
       async function onSubmit(values) {
          try {
               const url=`${import.meta.env.VITE_URL}/login`
@@ -89,14 +103,19 @@ console.log("calling API with id:", user.user._id)
         
     }
    
+     if (loading) return <Loading/>
   return (
     <Card className=" max-w-screen-md mx-auto px-15">
     <CardContent>
-              <div className='flex justify-center items-center mt-5'>
-            <Avatar className="w-28 h-28">
-             <AvatarImage src={user.user.avatar || userImage} />
-            </Avatar>
-        </div>
+
+<div className='flex justify-center items-center mt-5'>
+  <Avatar className="w-28 h-28 relative group">
+    <AvatarImage src={userData?.data?.avatar || userImage} />
+    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 duration-300 cursor-pointer">
+      <IoCameraOutline className="text-xl text-white transform transition-transform duration-300 group-hover:scale-110"/>
+    </div>
+  </Avatar>
+</div>
 
         
         <div>
@@ -113,7 +132,7 @@ console.log("calling API with id:", user.user._id)
                       <Input
                         placeholder="Enter your Name"
                         {...field}
-                        value={user.user.name || user.user.data.name}
+                        value={userData?.data?.name||user.user.data.name}
                       />
                     </FormControl>
                     <FormMessage />
@@ -133,7 +152,7 @@ console.log("calling API with id:", user.user._id)
                       <Input
                         placeholder="Enter your email address"
                         {...field}
-                         value={user.user.email || user.user.data.email}
+                         value={userData?.data?.email || user.user.data.email}
                       />
                     </FormControl>
                     <FormMessage />
