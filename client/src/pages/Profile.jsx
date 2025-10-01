@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button";
 import {
@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import z from 'zod';
+import z, { file } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from 'react-router-dom';
@@ -23,9 +23,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { useFetch } from '@/hooks/useFetch.js';
 import Loading from '@/components/Loading';
 import { IoCameraOutline } from "react-icons/io5"
+import Dropzone from 'react-dropzone';
 
 
 const Profile = () => {
+    const [filePreview,setFilePreview]=useState()
+
+
     const user=useSelector((state)=>state.user)
     const userId=user?.user?._id
     const {data:userData,loading,error}=useFetch(userId?`${import.meta.env.VITE_URL}/users/get-user/${userId}`:null,{
@@ -73,6 +77,7 @@ const Profile = () => {
 
       },[userData])
       async function onSubmit(values) {
+        //Need to work on here
          try {
               const url=`${import.meta.env.VITE_URL}/login`
               const response=await fetch(url,
@@ -103,18 +108,85 @@ const Profile = () => {
         
     }
    
-     if (loading) return <Loading/>
+
+    const handleFileSelection=(files)=>{
+      console.log("Files dropped:",files);
+
+      //files is an array,get first file
+      const file=files[0];
+
+      if(!file) return;
+
+      //Validate File size(e.g. max 5MB)
+      const maxSize=5*1024*1024;//5MB in bytes
+      if(file.size>maxSize){
+        showToast("error","File too large! Max 5MB")
+        return;
+      }
+
+      if(!file.type.startsWith("image/")){
+        showToast("error", "Please select an image file");
+        return;
+      }
+
+//When you select a file from your computer, you have a File object, but you can't directly display it in an <img> tag or avatar.
+
+      const preview=URL.createObjectURL(file)//This creates a temporary URL that points to the file in your browser's memory.
+      setFilePreview(preview);
+      // preview = "blob:http://localhost:5173/abc-123-def-456"
+      console.log(preview)
+
+
+    }
+
+    useEffect(()=>{
+      //This function runs when component unmounts OR filePreview changes
+      //It runs before setting new filePreview
+      return ()=>{
+        if(filePreview){
+          URL.revokeObjectURL(filePreview);// Delete old URL from memory
+          console.log("Preview Removed: ",filePreview)
+        }
+      }
+    },[filePreview])// Runs whenever filePreview changes
+    if (loading) return <Loading/>
+
+       // Dropzone gives you these two functions
+    // getRootProps = makes any div clickable
+    // getInputProps = creates a hidden file input
+
+    //     User clicks Avatar
+    //         ↓
+    //     getRootProps() detects the click
+    //         ↓
+    //     Triggers the hidden <input type="file">
+    //         ↓
+    //     File picker dialog opens
+    //         ↓
+    //     User selects a file
+    //         ↓
+    //     onDrop fires → calls handleFileSelection(files)
+    //         ↓
+    //     You get the file in your function!
   return (
     <Card className=" max-w-screen-md mx-auto px-15">
     <CardContent>
 
 <div className='flex justify-center items-center mt-5'>
-  <Avatar className="w-28 h-28 relative group">
-    <AvatarImage src={userData?.data?.avatar || userImage} />
-    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 duration-300 cursor-pointer">
-      <IoCameraOutline className="text-xl text-white transform transition-transform duration-300 group-hover:scale-110"/>
-    </div>
-  </Avatar>
+<Dropzone onDrop={acceptedFiles => handleFileSelection(acceptedFiles)}>
+  {({getRootProps, getInputProps}) => (
+      <div {...getRootProps()}>
+        <input {...getInputProps()} />
+        <Avatar className="w-28 h-28 relative group">
+        <AvatarImage src={filePreview?filePreview:(userData?.data?.avatar || userImage)} />
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 duration-300 cursor-pointer">
+        <IoCameraOutline className="text-xl text-white transform transition-transform duration-300 group-hover:scale-110"/>
+        </div>
+        </Avatar>
+      </div>
+  )}
+</Dropzone>
+
 </div>
 
         
