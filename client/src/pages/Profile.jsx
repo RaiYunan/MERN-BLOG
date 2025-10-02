@@ -15,7 +15,7 @@ import z, { file } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from 'react-router-dom';
-import { RouteSignUp } from '@/helpers/RouteName';
+import { RouteIndex, RouteSignUp } from '@/helpers/RouteName';
 import { useDispatch, useSelector } from 'react-redux';
 import { showToast } from '@/helpers/showToast';
 import userImage from "../assets/images/download.png"
@@ -24,10 +24,12 @@ import { useFetch } from '@/hooks/useFetch.js';
 import Loading from '@/components/Loading';
 import { IoCameraOutline } from "react-icons/io5"
 import Dropzone from 'react-dropzone';
+import { setUser } from '@/redux/user/user.slice';
 
 
 const Profile = () => {
     const [filePreview,setFilePreview]=useState()
+    const [file,setFile]=useState()
 
 
     const user=useSelector((state)=>state.user)
@@ -77,30 +79,34 @@ const Profile = () => {
 
       },[userData])
       async function onSubmit(values) {
-        //Need to work on here
          try {
-              const url=`${import.meta.env.VITE_URL}/login`
+              const formData=new FormData()
+              formData.append("avatar",file)
+              formData.append("data",JSON.stringify(values))
+
+              console.log("File in frontend:", file)
+              console.log("data in frontend:", values)
+
+              const url=`${import.meta.env.VITE_URL}/users/update-user/${userData?._id}`
               const response=await fetch(url,
                 {
-                  method:"POST",
-                  headers:{"Content-type":"application/json"},
+                  method:"PATCH",
                   credentials:"include",
-                  body:JSON.stringify(values),
+                  body:formData,
                 }
               )
         
               const data=await response.json();
-        
-              console.log(response);
+        //need to work from here
               if(!response.ok){
-                console.log("Error while logging in",data)
+                console.log("Error while updating user details",data)
                 showToast("error",data.message);
                 return;
               }
               console.log("before dispatch",data)
               dispatch(setUser(data))
               navigate(RouteIndex);
-              showToast("success","User logged in sucessfully")
+              showToast("success",data.message)
               
             } catch (error) {
               showToast("error",error.message)
@@ -134,7 +140,7 @@ const Profile = () => {
       const preview=URL.createObjectURL(file)//This creates a temporary URL that points to the file in your browser's memory.
       setFilePreview(preview);
       // preview = "blob:http://localhost:5173/abc-123-def-456"
-      console.log(preview)
+      setFile(file)
 
 
     }
@@ -178,7 +184,7 @@ const Profile = () => {
       <div {...getRootProps()}>
         <input {...getInputProps()} />
         <Avatar className="w-28 h-28 relative group">
-        <AvatarImage src={filePreview?filePreview:(userData?.data?.avatar || userImage)} />
+        <AvatarImage src={filePreview?filePreview:(userData?.avatar || userImage)} />
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 duration-300 cursor-pointer">
         <IoCameraOutline className="text-xl text-white transform transition-transform duration-300 group-hover:scale-110"/>
         </div>
@@ -204,7 +210,7 @@ const Profile = () => {
                       <Input
                         placeholder="Enter your Name"
                         {...field}
-                        value={userData?.data?.name||user.user.data.name}
+                        value={userData?.name||user.user.name}
                       />
                     </FormControl>
                     <FormMessage />
@@ -224,7 +230,7 @@ const Profile = () => {
                       <Input
                         placeholder="Enter your email address"
                         {...field}
-                         value={userData?.data?.email || user.user.data.email}
+                         value={userData?.email || user.user.email}
                       />
                     </FormControl>
                     <FormMessage />

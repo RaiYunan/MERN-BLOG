@@ -6,12 +6,18 @@ import { auth, provider } from '@/helpers/firebase';
 import { showToast } from '@/helpers/showToast';
 import { useNavigate } from 'react-router-dom';
 import { RouteIndex } from '@/helpers/RouteName';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '@/redux/user/user.slice';
 
 const GoogleLogin = () => {
   const navigate=useNavigate()
   const dispatch=useDispatch()
+
+  //    const state = useSelector((state) => state); // entire Redux store
+  // const userState = useSelector((state) => state.user); // only user slice
+
+  // console.log("Full Redux state:", state);
+  // console.log("User slice:", userState);
     const handleLogin=async()=>{
         
         try {
@@ -43,9 +49,9 @@ const GoogleLogin = () => {
           }
 
           showToast("success",data.message);
-          console.log("before dispatch data\n",data);
-          console.log("before dispatch data.data\n",data.data);
+          console.log("before dispatch data.data and setting to state.user\n",data.data);
           dispatch(setUser(data.data));
+        
           navigate(RouteIndex,{replace:true});
 
         } catch (error) {
