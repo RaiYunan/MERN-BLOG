@@ -11,10 +11,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import z, { file } from 'zod';
+import z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { RouteIndex, RouteSignUp } from '@/helpers/RouteName';
 import { useDispatch, useSelector } from 'react-redux';
 import { showToast } from '@/helpers/showToast';
@@ -60,20 +60,28 @@ const Profile = () => {
       const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name:"",
-          email: "",
-          bio:"",
-          password: "",
+           name: "",
+           email: "",
+           bio: "",
+           password: "",
 
         },
       });
 
       useEffect(()=>{
-      if(userData && userData.success){
+        console.log("useEffect triggered with userData",userData)
+      if(userData){
+        console.log("Setting form values:", {
+          name: userData.name,
+          email: userData.email,
+          bio: userData.bio
+        });
+
          form.reset({
-          name:userData?.data.name,
-          email:userData?.data.email,
-          bio: userData?.data.bio
+          name:userData?.name || "",
+          email:userData?.email || "",
+          bio: userData?.bio || "",
+          password:""
         })
       }
 
@@ -81,11 +89,19 @@ const Profile = () => {
       async function onSubmit(values) {
          try {
               const formData=new FormData()
-              formData.append("avatar",file)
-              formData.append("data",JSON.stringify(values))
+             if(file){
+               formData.append("avatar",file)
+             }
+
+             // Create clean data object (remove empty password)
+             const dataToSend = { ...values };
+             if (!dataToSend.password || dataToSend.password.trim() === "") {
+               delete dataToSend.password;
+             }
+              formData.append("data",JSON.stringify(dataToSend))
 
               console.log("File in frontend:", file)
-              console.log("data in frontend:", values)
+              console.log("data in frontend:", dataToSend)
 
               const url=`${import.meta.env.VITE_URL}/users/update-user/${userData?._id}`
               const response=await fetch(url,
@@ -103,12 +119,17 @@ const Profile = () => {
                 showToast("error",data.message);
                 return;
               }
-              console.log("before dispatch",data)
-              dispatch(setUser(data))
-              navigate(RouteIndex);
+              
+              setFile(null);
+              setFilePreview(null);
+
+              dispatch(setUser({user:data.data}))
               showToast("success",data.message)
+              navigate(RouteIndex);
+      
               
             } catch (error) {
+              console.error("Error in onSubmit:", error);
               showToast("error",error.message)
             } 
         
@@ -119,28 +140,28 @@ const Profile = () => {
       console.log("Files dropped:",files);
 
       //files is an array,get first file
-      const file=files[0];
+      const selectedFile=files[0];
 
       if(!file) return;
 
       //Validate File size(e.g. max 5MB)
       const maxSize=5*1024*1024;//5MB in bytes
-      if(file.size>maxSize){
+      if(selectedFile.size>maxSize){
         showToast("error","File too large! Max 5MB")
         return;
       }
 
-      if(!file.type.startsWith("image/")){
+      if(!selectedFile.type.startsWith("image/")){
         showToast("error", "Please select an image file");
         return;
       }
 
 //When you select a file from your computer, you have a File object, but you can't directly display it in an <img> tag or avatar.
 
-      const preview=URL.createObjectURL(file)//This creates a temporary URL that points to the file in your browser's memory.
+      const preview=URL.createObjectURL(selectedFile)//This creates a temporary URL that points to the file in your browser's memory.
       setFilePreview(preview);
       // preview = "blob:http://localhost:5173/abc-123-def-456"
-      setFile(file)
+      setFile(selectedFile)
 
 
     }
@@ -173,7 +194,8 @@ const Profile = () => {
     //         ↓
     //     onDrop fires → calls handleFileSelection(files)
     //         ↓
-    //     You get the file in your function!
+    
+    const displayAvatar=filePreview||userData?.avatar||userImage
   return (
     <Card className=" max-w-screen-md mx-auto px-15">
     <CardContent>
@@ -184,7 +206,7 @@ const Profile = () => {
       <div {...getRootProps()}>
         <input {...getInputProps()} />
         <Avatar className="w-28 h-28 relative group">
-        <AvatarImage src={filePreview?filePreview:(userData?.avatar || userImage)} />
+          <AvatarImage src={filePreview ? filePreview:(userData?.avatar || userImage)} />
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 duration-300 cursor-pointer">
         <IoCameraOutline className="text-xl text-white transform transition-transform duration-300 group-hover:scale-110"/>
         </div>
@@ -210,7 +232,7 @@ const Profile = () => {
                       <Input
                         placeholder="Enter your Name"
                         {...field}
-                        value={userData?.name||user.user.name}
+          
                       />
                     </FormControl>
                     <FormMessage />
@@ -230,7 +252,6 @@ const Profile = () => {
                       <Input
                         placeholder="Enter your email address"
                         {...field}
-                         value={userData?.email || user.user.email}
                       />
                     </FormControl>
                     <FormMessage />

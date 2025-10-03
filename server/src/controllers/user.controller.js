@@ -42,28 +42,34 @@ export const updateUser = asyncHandler(async (req, res, next) => {
   console.log("req.body:", req.body)
   console.log("req.file:", req.file)
 
+  const updateFields={}
   // Avatar path from multer
-  const avatarLocalPath = req.file?.path;
-  if(!avatarLocalPath){
-    throw new ApiError(400,"Avatar file is missing!")
-  }
+ if(req.file?.path){
+   const avatarLocalPath = req.file?.path;
   const avatar=await uploadOnCloudinary(avatarLocalPath)
   if(!avatar || !avatar.secure_url){
      throw new ApiError(400,"Avatar file is missing!!");
   }
-  const avatarUrl=avatar.secure_url
+
+  updateFields.avatar=avatar.secure_url
+ }
+
+ if(data.name){
+  updateFields.name = data.name.trim();
+
+ }
+ if(data.bio!==undefined){
+  updateFields.name = data.bio
+ }
+ if(data.password ||data.password.trim()!==""){
+  updateFields.password=data.password
+ }
   const updatedUser=await User.findByIdAndUpdate(
     userId,
     {
-        $set:{
-            avatar:avatarUrl,
-            name:data.name.trim(),
-            bio:data.bio,
-            password:data.password
-        },
-       
+        $set:updateFields
     },
-     {new:true}
+     {new:true,runValidators:true}
   ).select("-password -refreshToken")
 
   // Update user in MongoDB

@@ -84,8 +84,8 @@ const TopBar = () => {
   </DropdownMenuTrigger>
   <DropdownMenuContent>
     <DropdownMenuLabel>
-      <p className='text-base'>{user.user.name || user.user.data.name}</p>
-      <p className='text-xs'>{user.user.email || user.user.data.email}</p>
+      <p className='text-base'>{user.user?.name}</p>
+      <p className='text-xs'>{user.user?.email}</p>
     </DropdownMenuLabel>
     <DropdownMenuSeparator />
     <DropdownMenuItem asChild className="cursor-pointer">
