@@ -123,7 +123,7 @@ const Profile = () => {
               setFile(null);
               setFilePreview(null);
 
-              dispatch(setUser({user:data.data}))
+              dispatch(setUser(data.data))
               showToast("success",data.message)
               navigate(RouteIndex);
       
@@ -142,7 +142,7 @@ const Profile = () => {
       //files is an array,get first file
       const selectedFile=files[0];
 
-      if(!file) return;
+      if(!selectedFile) return;
 
       //Validate File size(e.g. max 5MB)
       const maxSize=5*1024*1024;//5MB in bytes
@@ -195,7 +195,6 @@ const Profile = () => {
     //     onDrop fires → calls handleFileSelection(files)
     //         ↓
     
-    const displayAvatar=filePreview||userData?.avatar||userImage
   return (
     <Card className=" max-w-screen-md mx-auto px-15">
     <CardContent>

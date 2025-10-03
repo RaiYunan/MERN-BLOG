@@ -59,7 +59,7 @@ export const updateUser = asyncHandler(async (req, res, next) => {
 
  }
  if(data.bio!==undefined){
-  updateFields.name = data.bio
+  updateFields.bio = data.bio
  }
  if(data.password ||data.password.trim()!==""){
   updateFields.password=data.password
