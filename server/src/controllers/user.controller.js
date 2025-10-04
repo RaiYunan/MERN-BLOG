@@ -64,16 +64,14 @@ export const updateUser = asyncHandler(async (req, res, next) => {
  if(data.password ||data.password.trim()!==""){
   updateFields.password=data.password
  }
-  const updatedUser=await User.findByIdAndUpdate(
-    userId,
-    {
-        $set:updateFields
-    },
-     {new:true,runValidators:true}
-  ).select("-password -refreshToken")
+  const user=await User.findById(userId);
+  if(!user) throw new ApiError("User not found");
 
+  Object.assign(user,updateFields)
+  await user.save()
   // Update user in MongoDB
 
+  const updatedUser=await User.findById(userId).select("-password -refreshToken")
   if (!updatedUser) {
     throw new ApiError(404, "User not found");
   }

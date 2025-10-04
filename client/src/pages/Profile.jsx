@@ -37,10 +37,6 @@ const Profile = () => {
     const {data:userData,loading,error}=useFetch(userId?`${import.meta.env.VITE_URL}/users/get-user/${userId}`:null,{
       method:"GET",credentials:"include"
     },[])
-
-    
-    console.log("Redux user:", user);
-    console.log("Fetched userData:", userData);
     const dispatch=useDispatch()
     const navigate=useNavigate()
 
@@ -69,14 +65,7 @@ const Profile = () => {
       });
 
       useEffect(()=>{
-        console.log("useEffect triggered with userData",userData)
       if(userData){
-        console.log("Setting form values:", {
-          name: userData.name,
-          email: userData.email,
-          bio: userData.bio
-        });
-
          form.reset({
           name:userData?.name || "",
           email:userData?.email || "",
@@ -86,19 +75,15 @@ const Profile = () => {
       }
 
       },[userData])
+
       async function onSubmit(values) {
          try {
               const formData=new FormData()
              if(file){
                formData.append("avatar",file)
              }
-
-             // Create clean data object (remove empty password)
-             const dataToSend = { ...values };
-             if (!dataToSend.password || dataToSend.password.trim() === "") {
-               delete dataToSend.password;
-             }
-              formData.append("data",JSON.stringify(dataToSend))
+             const dataToSend=JSON.stringify(values)
+              formData.append("data",dataToSend)
 
               console.log("File in frontend:", file)
               console.log("data in frontend:", dataToSend)
@@ -112,20 +97,20 @@ const Profile = () => {
                 }
               )
         
-              const data=await response.json();
+              const reponseData=await response.json();
         //need to work from here
               if(!response.ok){
-                console.log("Error while updating user details",data)
-                showToast("error",data.message);
+                console.log("Error while updating user details",reponseData)
+                showToast("error",reponseData.message);
                 return;
               }
               
               setFile(null);
               setFilePreview(null);
 
-              dispatch(setUser(data.data))
-              showToast("success",data.message)
-              navigate(RouteIndex);
+              dispatch(setUser(reponseData.data))
+              navigate(RouteIndex,{replace:true});
+              showToast("success",reponseData.message)
       
               
             } catch (error) {
@@ -137,9 +122,6 @@ const Profile = () => {
    
 
     const handleFileSelection=(files)=>{
-      console.log("Files dropped:",files);
-
-      //files is an array,get first file
       const selectedFile=files[0];
 
       if(!selectedFile) return;
@@ -162,8 +144,7 @@ const Profile = () => {
       setFilePreview(preview);
       // preview = "blob:http://localhost:5173/abc-123-def-456"
       setFile(selectedFile)
-
-
+      console.log(selectedFile)
     }
 
     useEffect(()=>{

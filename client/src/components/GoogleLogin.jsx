@@ -13,23 +13,18 @@ const GoogleLogin = () => {
   const navigate=useNavigate()
   const dispatch=useDispatch()
 
-  //    const state = useSelector((state) => state); // entire Redux store
-  // const userState = useSelector((state) => state.user); // only user slice
-
-  // console.log("Full Redux state:", state);
-  // console.log("User slice:", userState);
     const handleLogin=async()=>{
         
         try {
           const googleResponse=await signInWithPopup(auth,provider)
 
           const user=googleResponse.user
+          console.log("googleRespnse",googleResponse)
           const bodyData={
             name:user.displayName,
             email:user.email,
             avatar:user.photoURL
           }
-          console.log(bodyData)
         
         const url=`${import.meta.env.VITE_URL}/auth/google-login`
 
@@ -42,22 +37,19 @@ const GoogleLogin = () => {
           }
           )
 
-          const data=await response.json()
+          const responseData=await response.json()
           if(!response.ok){
-            showToast("error",data.message||"Something is wrong.Try again");
+            showToast("error",responseData.message||"Something is wrong.Try again");
             return;
           }
 
-          showToast("success",data.message);
-          console.log("before dispatch data.data and setting to state.user\n",data.data);
-          dispatch(setUser(data.data));
-        
+          dispatch(setUser(responseData.data));
           navigate(RouteIndex,{replace:true});
+          showToast("success",responseData.message);
 
         } catch (error) {
           console.log("Error",error)
           showToast("error",error.message)
-          
         }
 
     }

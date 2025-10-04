@@ -17,7 +17,7 @@ import { FaBlogger } from "react-icons/fa6";
 import { FaComments } from "react-icons/fa";
 import { FaUsers } from "react-icons/fa";
 import { GoDotFill } from "react-icons/go";
-import { RouteIndex } from "@/helpers/RouteName";
+import { RouteCategoryDetails, RouteIndex } from "@/helpers/RouteName";
 
 
 
@@ -34,38 +34,48 @@ const AppSideBar = () => {
           <SidebarMenu>
 
             <SidebarMenuItem>
-              <SidebarMenuButton>
+              <Link to={RouteIndex}>
+               <SidebarMenuButton  className="cursor-pointer">
                 <IoHome />
-                <Link to={RouteIndex}>Home</Link>
+                Home
               </SidebarMenuButton>
-            </SidebarMenuItem>
-
-             <SidebarMenuItem>
-              <SidebarMenuButton>
-                <TbCategoryFilled />
-                <Link to="">Categories</Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-
-             <SidebarMenuItem>
-              <SidebarMenuButton>
-                <FaBlogger />
-                <Link to="">Blogs</Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-
-             <SidebarMenuItem>
-              <SidebarMenuButton>
-              <FaComments />
-                <Link to="">Comments</Link>
-              </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
 
             <SidebarMenuItem>
-              <SidebarMenuButton>
-                <FaUsers />
-                <Link to="">Users</Link>
+              <Link to={RouteCategoryDetails}>
+               <SidebarMenuButton  className="cursor-pointer">
+                <TbCategoryFilled  />
+                Categories
               </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+
+             <SidebarMenuItem>
+              <Link to="">
+               <SidebarMenuButton  className="cursor-pointer">
+                <FaBlogger/>
+                Blogs
+              </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+
+             <SidebarMenuItem>
+              <Link to="">
+               <SidebarMenuButton  className="cursor-pointer">
+                <FaComments />
+                Comments
+              </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+
+            <SidebarMenuItem>
+              <Link to="">
+               <SidebarMenuButton  className="cursor-pointer">
+                <FaUsers  />
+                Users
+              </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
             
 
