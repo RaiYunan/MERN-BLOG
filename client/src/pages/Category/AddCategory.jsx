@@ -51,6 +51,30 @@ const AddCategory = () => {
     
       async function onSubmit(values) {
         console.log(values);
+        try {
+          const url=`${import.meta.env.VITE_URL}/category/add-category`
+
+          const response=await fetch(url,{
+            method:"POST",
+            headers:{"Content-type":"application/json"},
+            credentials:"include",
+            body:JSON.stringify(values)
+          })
+
+          const responseData=await response.json();
+          if(!response.ok){
+            showToast("error",responseData.message);
+            return
+          }
+          form.reset({
+            name:"",
+            slug:""
+          })
+          showToast("success",responseData.message)
+        } catch (error) {
+          showToast("error",error.message)
+          
+        }
       }
     
   return (
@@ -95,7 +119,7 @@ const AddCategory = () => {
               />
             </div>
 
-             <Button type="submit" className="w-full">
+             <Button type="submit" className="w-full cursor-pointer">
                             Submit
              </Button>
           </form>

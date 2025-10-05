@@ -1,10 +1,12 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import userReducer from "../redux/user/user.slice.js"
+import categoryReducer from "../redux/category/category.slice.js"
 import { persistStore, persistReducer } from 'redux-persist'
 import sessionStorage from 'redux-persist/es/storage/session'
 
 const rootReducer=combineReducers({
-  user:userReducer
+  user:userReducer,
+  category:categoryReducer
 })
 
 const persistConfig = {

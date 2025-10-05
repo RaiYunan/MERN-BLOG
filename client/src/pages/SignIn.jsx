@@ -121,7 +121,7 @@ const SignIn = () => {
             </div>
 
             <div className="mt-5">
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full cursor-pointer">
                 Sign In
               </Button>
               <div className="flex gap-2 text-sm justify-center items-center my-5">
