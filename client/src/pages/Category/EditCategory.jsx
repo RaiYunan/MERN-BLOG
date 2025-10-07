@@ -1,11 +1,146 @@
-import React from 'react'
+import { Card, CardContent } from "@/components/ui/card";
+import { zodResolver } from "@hookform/resolvers/zod";
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { useNavigate, Link, useParams } from "react-router-dom";
+import z from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { RouteCategoryDetails, RouteIndex, RouteSignIn } from "@/helpers/RouteName";
+import { showToast } from "@/helpers/showToast";
+import { Button } from "@/components/ui/button";
+import slugify from "slugify";
+import { useFetch } from "@/hooks/useFetch";
+import Loading from "@/components/Loading";
 
 const EditCategory = () => {
-  return (
-    <div>
-      EditCategory
-    </div>
-  )
-}
+  const {category_id}=useParams();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-export default EditCategory
+  const url=`${import.meta.env.VITE_URL}/category/show-category/${category_id}`
+  const {data:categoryData,loading,error}=useFetch(url,{
+    methods:"GET",
+    credentials:"include"
+  })
+
+  console.log("catgeoryData fetched \n",categoryData)
+
+  const formSchema = z.object({
+    name: z.string().min(3, "Name must be atleast 3 characters"),
+    slug: z.string().min(3, "Slug must be atleast 3 characters"),
+  });
+
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      slug: "",
+    },
+  });
+
+  useEffect(()=>{
+    form.reset({
+      name:categoryData?.name || "",
+      slug:categoryData?.slug || ""
+    })
+
+  },[categoryData])
+
+  const nameValue = form.watch("name");
+
+  useEffect(() => {
+    if (nameValue.trim()) {
+      const generatedSlug = slugify(nameValue, {
+        trim: true,
+        strict: true, //removes ALL special characters except letters, numbers, and hyphens.
+        lower: true,
+      });
+      form.setValue("slug", generatedSlug);
+    }
+  }, [nameValue, form]);
+
+  async function onSubmit(values) {
+    console.log(values);
+    try {
+      const url = `${import.meta.env.VITE_URL}/category/edit-category/${category_id}`;
+
+      const response = await fetch(url, {
+        method: "PATCH",
+        headers: { "Content-type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(values),
+      });
+
+      const responseData = await response.json();
+      console.log(responseData)
+      if (!response.ok) {
+        showToast("error", responseData.message);
+        return;
+      }
+      navigate(RouteCategoryDetails,{replace:true})
+      showToast("success", responseData.message);
+    } catch (error) {
+      showToast("error", error.message);
+    }
+  }
+  if (loading) return <Loading/>
+
+  return (
+    <div className="pt-5 max-w-screen-md mx-auto">
+      <Card>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="mb-5 px-5">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Category Name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="mb-5 px-5">
+                <FormField
+                  control={form.control}
+                  name="slug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Slug</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Slug" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <Button type="submit" className="w-full cursor-pointer">
+                Save
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default EditCategory;

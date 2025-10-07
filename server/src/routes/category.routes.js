@@ -4,7 +4,7 @@ import { addCategory, deleteCategory, editCategory, getAllCategories, showCatego
 const router=Router()
 
 router.route("/add-category").post(addCategory);
-router.route("/edit-category/:categoryId").post(editCategory);
+router.route("/edit-category/:categoryId").patch(editCategory);
 router.route("/show-category/:categoryId").get(showCategory);
 router.route("/delete-category/:categoryId").post(deleteCategory);
 router.route("/all-category").get(getAllCategories);

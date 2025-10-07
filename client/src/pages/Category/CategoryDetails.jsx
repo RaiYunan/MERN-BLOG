@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { RouteAddCategory } from "@/helpers/RouteName";
+import { RouteAddCategory, RouteEditCategory } from "@/helpers/RouteName";
 import React from "react";
 import { Link } from "react-router-dom";
 import {
@@ -16,6 +16,8 @@ import { useFetch } from "@/hooks/useFetch";
 import { useDispatch } from "react-redux";
 import { setCatgeory } from "@/redux/category/category.slice.js";
 import Loading from "@/components/Loading";
+import { FaRegEdit } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 
 const CategoryDetails = () => {
   const dispatch = useDispatch();
@@ -63,12 +65,22 @@ const CategoryDetails = () => {
                       <TableHead>{category.slug}</TableHead>
                       <TableCell>
                         <div className="flex gap-2">
-                          <Button variant="outline" className="cursor-pointer" size="sm">
-                            Edit
+                          <Button asChild
+                            variant="outline"
+                            className="hover:text-white hover:bg-violet-500 cursor-pointer"
+                            size="sm"
+                          >
+                            <Link to={RouteEditCategory(category._id)}>
+                              <FaRegEdit />
+                            </Link>
                           </Button>
-                          <Button variant="destructive"
-                          className="cursor-pointer" size="sm">
-                            Delete
+                          <Button
+                            variant="destructive"
+                            className="cursor-pointer
+                           "
+                            size="sm"
+                          >
+                            <MdDelete />
                           </Button>
                         </div>
                       </TableCell>

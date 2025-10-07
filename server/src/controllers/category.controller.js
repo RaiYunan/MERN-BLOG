@@ -20,9 +20,38 @@ export const addCategory = asyncHandler(async (req, res, next) => {
     .json(new ApiResponse(200, category, "Category added successfully"));
 });
 
-export const showCategory = asyncHandler(async (req, res, next) => {});
+export const showCategory = asyncHandler(async (req, res, next) => {
+  const {categoryId}=req.params
+  const category=await Category.findById(categoryId);
+  if(!category){
+    throw new ApiError(404,"Catgeory missing.")
+  }
 
-export const editCategory = asyncHandler(async (req, res, next) => {});
+  res.status(200).json(new ApiResponse(200,category,"Category fetched Successfully"))
+});
+
+export const editCategory = asyncHandler(async (req, res, next) => {
+  const {categoryId}=req.params
+  const {name,slug}=req.body
+  if(!categoryId){
+    throw new ApiError(404,"Catgeory ID is missing!");
+  }
+
+  const category=await Category.findByIdAndUpdate(categoryId,{
+    name:name,
+    slug:slug
+  },{
+    new:true
+  })
+
+  if(!category){
+    throw new ApiError(400,"Something went wrong while updating category.")
+  }
+
+  console.log("Updated Category:\n",category)
+
+  res.status(200).json(new ApiResponse(200,category,"Category edited sucessfully."))
+});
 
 export const deleteCategory = asyncHandler(async (req, res, next) => {});
 
