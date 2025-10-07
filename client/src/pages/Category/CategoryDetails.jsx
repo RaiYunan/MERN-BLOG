@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { RouteAddCategory, RouteEditCategory } from "@/helpers/RouteName";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Table,
@@ -13,14 +13,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useFetch } from "@/hooks/useFetch";
-import { useDispatch } from "react-redux";
-import { setCatgeory } from "@/redux/category/category.slice.js";
 import Loading from "@/components/Loading";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { showToast } from "@/helpers/showToast";
 
 const CategoryDetails = () => {
-  const dispatch = useDispatch();
+  const [refreshData,setRefreshData]=useState(false)
 
   const url = `${import.meta.env.VITE_URL}/category/all-category`;
   const {
@@ -28,12 +27,38 @@ const CategoryDetails = () => {
     loading,
     error,
   } = useFetch(url, {
-    methods: "GET",
+    method: "GET",
     // headers:{"Content-type":"application\json"},
     credentials: "include",
-  });
-  console.log("CatgeoryData", categoryData);
-  // dispatch(setCatgeory(categoryData.data))//array of objects
+  },[refreshData]);
+
+  const handleDelete = async (categoryID) => {
+    const c = confirm("Are you sure you want to delete this category?");
+    if (c) {
+      try {
+        const BASE_URL = `${
+          import.meta.env.VITE_URL
+        }/category/delete-category/${categoryID}`;
+        const response = await fetch(BASE_URL, {
+          method: "DELETE",
+          credentials: "include",
+        });
+
+        
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          showToast("error", responseData.message);
+          return;
+        }
+
+        showToast("success", responseData.message);
+        setRefreshData((prev)=>!prev)
+      } catch (error) {
+        showToast("error", error.message  || "Failed to delete category");
+      }
+    }
+  };
 
   if (loading) return <Loading />;
   return (
@@ -61,11 +86,12 @@ const CategoryDetails = () => {
                 categoryData.map((category) => {
                   return (
                     <TableRow key={category._id}>
-                      <TableHead>{category.name}</TableHead>
-                      <TableHead>{category.slug}</TableHead>
+                      <TableCell>{category.name}</TableCell>
+                      <TableCell>{category.slug}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
-                          <Button asChild
+                          <Button
+                            asChild
                             variant="outline"
                             className="hover:text-white hover:bg-violet-500 cursor-pointer"
                             size="sm"
@@ -79,6 +105,7 @@ const CategoryDetails = () => {
                             className="cursor-pointer
                            "
                             size="sm"
+                            onClick={() => handleDelete(category._id)}
                           >
                             <MdDelete />
                           </Button>
