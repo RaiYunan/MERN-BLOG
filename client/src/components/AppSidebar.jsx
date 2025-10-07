@@ -17,7 +17,7 @@ import { FaBlogger } from "react-icons/fa6";
 import { FaComments } from "react-icons/fa";
 import { FaUsers } from "react-icons/fa";
 import { GoDotFill } from "react-icons/go";
-import { RouteCategoryDetails, RouteIndex } from "@/helpers/RouteName";
+import { RouteBlog, RouteCategoryDetails, RouteIndex } from "@/helpers/RouteName";
 
 const AppSideBar = () => {
   return (
@@ -49,7 +49,7 @@ const AppSideBar = () => {
             </SidebarMenuItem>
 
             <SidebarMenuItem>
-              <Link to="">
+              <Link to={RouteBlog}>
                 <SidebarMenuButton className="cursor-pointer">
                   <FaBlogger />
                   Blogs

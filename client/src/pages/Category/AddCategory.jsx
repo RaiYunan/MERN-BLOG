@@ -45,6 +45,8 @@ const AddCategory = () => {
         lower: true,
       });
       form.setValue("slug", generatedSlug);
+    }else{
+        form.setValue("slug","")
     }
   }, [nameValue, form]);
 
