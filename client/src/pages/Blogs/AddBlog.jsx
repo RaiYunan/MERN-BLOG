@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { useFetch } from "@/hooks/useFetch";
 import Loading from "@/components/Loading";
+import Editor from "@/components/Editor";
 
 const AddBlog = () => {
   const [filePreview, setFilePreview] = useState();
@@ -180,7 +181,7 @@ const AddBlog = () => {
               >
                 {({ getRootProps, getInputProps }) => (
                   <section>
-                    <div {...getRootProps()} className="flex flex-col items-center justify-center w-[300px] h-[300px] border-2 border-dashed border-gray-400  cursor-pointer hover:border-blue-500 transition-colors duration-300 ease-in-out">
+                    <div {...getRootProps()} className="flex flex-col items-center justify-center w-[400px] h-[250px] border-2 border-dashed border-gray-400  cursor-pointer hover:border-blue-500 transition-colors duration-300 ease-in-out">
                       <input {...getInputProps()} />
                         {filePreview ? (
                           <img
@@ -196,6 +197,10 @@ const AddBlog = () => {
                 )}
               </Dropzone>
 
+            </div>
+            <div className="my-10">
+              <h2>Blog Content</h2>
+              <Editor initialData="Yunan Rai"/>
             </div>
 
             <Button type="submit" className="w-full cursor-pointer">
