@@ -239,7 +239,7 @@ export default function Editor(props) {
 				ref={editorContainerRef}
 			>
 				<div className="editor-container__editor">
-					<div ref={editorRef}>{editorConfig && <CKEditor editor={ClassicEditor} config={editorConfig}  />}</div>
+					<div ref={editorRef}>{editorConfig && <CKEditor onChange={props.onChange} editor={ClassicEditor} config={editorConfig}  />}</div>
 				</div>
 			</div>
 		</div>

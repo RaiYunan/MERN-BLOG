@@ -41,8 +41,6 @@ const AddBlog = () => {
     credentials: "include",
   });
 
-  console.log(categoryData);
-
   const formSchema = z.object({
     category: z.string().min(3, "Category must be at least 3 characters."),
     title: z.string().min(3, "Title must be at least 3 characters."),
@@ -58,14 +56,14 @@ const AddBlog = () => {
       category: "",
       title: "",
       slug: "",
+      blogContent: "",
     },
   });
 
   const titleValue = form.watch("title");
-  let generatedSlug;
   useEffect(() => {
     if (titleValue.trim()) {
-      generatedSlug = slugify(titleValue, {
+      const generatedSlug = slugify(titleValue, {
         trim: true,
         lower: true,
         strict: true,
@@ -76,8 +74,32 @@ const AddBlog = () => {
     }
   }, [titleValue]);
 
-  function onSubmit(values) {
-    console.log(values);
+  async function onSubmit(values) {
+    const formData = new FormData();
+    if (file) {
+      formData.append("image", file);
+    }
+
+    const dataToSend = JSON.stringify(values);
+    formData.append("data",dataToSend)
+    console.log("lauda")
+
+    const url=`${import.meta.env.VITE_URL}/blog/add-blog`;
+    try {
+      console.log("lund")
+      const response=await fetch(url,{
+        method:"POST",
+        credentials:"include",
+        body:formData
+      })
+      console.log(response)
+
+      const responseData=await response.json()
+      console.log(responseData)
+    } catch (error) {
+      console.log(error.message)
+      
+    }
   }
   function handleFileSelection(files) {
     const selectedFile = files[0];
@@ -98,6 +120,11 @@ const AddBlog = () => {
       }
     };
   }, [filePreview]);
+
+  function handleEditorData(event, editor) {
+    const data = editor.getData();
+    form.setValue("blogContent", data);
+  }
   if (loading) return <Loading />;
 
   return (
@@ -114,7 +141,7 @@ const AddBlog = () => {
                     <FormLabel>Category</FormLabel>
                     <FormControl>
                       <Select
-                        onValueChnage={field.onChange}
+                        onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <SelectTrigger>
@@ -175,32 +202,49 @@ const AddBlog = () => {
             </div>
 
             <div className="mb-5 px-5">
-              <span className="mb-2 block text-sm font-medium text-gray-700">Upload a Featured Image</span>
+              <span className="mb-2 block text-sm font-medium text-gray-700">
+                Upload a Featured Image
+              </span>
               <Dropzone
                 onDrop={(acceptedFiles) => handleFileSelection(acceptedFiles)}
               >
                 {({ getRootProps, getInputProps }) => (
                   <section>
-                    <div {...getRootProps()} className="flex flex-col items-center justify-center w-[400px] h-[250px] border-2 border-dashed border-gray-400  cursor-pointer hover:border-blue-500 transition-colors duration-300 ease-in-out">
+                    <div
+                      {...getRootProps()}
+                      className="flex flex-col items-center justify-center w-[400px] h-[250px] border-2 border-dashed border-gray-400  cursor-pointer hover:border-blue-500 transition-colors duration-300 ease-in-out"
+                    >
                       <input {...getInputProps()} />
-                        {filePreview ? (
-                          <img
-                            src={filePreview}
-                            alt="preview"
-                            className="object-cover w-full h-full"
-                          />
-                        ) : (
-                          <span>Drag & drop or click to upload</span>
-                        )}
+                      {filePreview ? (
+                        <img
+                          src={filePreview}
+                          alt="preview"
+                          className="object-cover w-full h-full"
+                        />
+                      ) : (
+                        <span>Drag & drop or click to upload</span>
+                      )}
                     </div>
                   </section>
                 )}
               </Dropzone>
-
             </div>
+
             <div className="my-10">
-              <h2>Blog Content</h2>
-              <Editor initialData="Yunan Rai"/>
+              <FormField
+                control={form.control}
+                name="blogContent"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Blog Content</FormLabel>
+                    <FormControl>
+                      {/* <Input placeholder="Enter Title" {...field} /> */}
+                      <Editor initialData="" onChange={handleEditorData} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
             <Button type="submit" className="w-full cursor-pointer">

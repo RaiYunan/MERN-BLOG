@@ -1,0 +1,13 @@
+import { Router } from "express";
+import { addBlog, deleteBlog, editBlog, getAllBlogs, showBlog } from "../controllers/blog.contoller.js";
+import { upload } from "../middlewares/multer.middleware.js";
+
+const router=Router()
+
+router.route("/add-blog").post(upload.single("image"),addBlog);
+router.route("edit-log/:blog_id").patch(editBlog)
+router.route("/delete-blog/:blog_id").delete(deleteBlog)
+router.route("/get-all-blogs").get(getAllBlogs)
+router.route("/show-blog/:blog_id").get(showBlog)
+
+export default router
