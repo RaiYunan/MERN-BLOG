@@ -1,26 +1,39 @@
 import mongoose from "mongoose";
 
-const blogSchema=new mongoose.Schema({
-    category:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Category"
+const blogSchema = new mongoose.Schema(
+  {
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
     },
-    title:{
-        type:String,
-        required:true,
-        trim:true
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
     },
-    slug:{
-        type:String,
-        required:true,
-        lowercase:true
+    title: {
+      type: String,
+      required: true,
+      trim: true,
     },
-    blogContent:{
-        type:String,
-        required:true
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
     },
-    image:{
-        type:String,
-        trim:true
-    }
-},{timestamps:true})
+    blogContent: {
+      type: String,
+      required: true,
+    },
+    featuredImage: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+  },
+  { timestamps: true }
+);
+
+export const Blog=mongoose.model("Blog",blogSchema)

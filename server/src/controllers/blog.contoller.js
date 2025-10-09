@@ -1,5 +1,8 @@
+import { Blog } from "../models/blog.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {encode} from "entities"
 
 export const getAllBlogs = asyncHandler(async (req, res, next) => {
 
@@ -13,11 +16,25 @@ export const editBlog=asyncHandler(async(req,res,next)=>{
 })
 
 export const addBlog=asyncHandler(async(req,res,next)=>{
-    const {category,title,slug,blogContent}=req.body
-    console.log("data in body",req?.body?.data)
-    console.log("Image in file",req?.file)
+    const data=JSON.parse(req.body.data)
+    console.log(data);
+    const featuredImagePath=req?.file?.path
+    let featuredImage;
+    if(featuredImagePath){
+        featuredImage=await uploadOnCloudinary(featuredImagePath);
+    }
 
-    res.status(200).json(new ApiResponse(200,{},"Blog added successfully"))
+    const blog=await Blog.create({
+        author:data.author,
+        category:data.category,
+        title:data.title,
+        slug:data.slug,
+        blogContent:encode(data.blogContent),
+        featuredImage:featuredImage?.secure_url
+    })
+
+    console.log(blog);
+    res.status(200).json(new ApiResponse(200,blog,"Blog added successfully"))
 
 })
 

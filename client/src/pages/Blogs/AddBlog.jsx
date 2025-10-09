@@ -30,9 +30,13 @@ import Editor from "@/components/Editor";
 import { showToast } from "@/helpers/showToast";
 import { useNavigate } from "react-router-dom";
 import { RouteBlog } from "@/helpers/RouteName";
+import { useSelector } from "react-redux";
+
 
 const AddBlog = () => {
   const navigate = useNavigate();
+  const user=useSelector((state)=>state.user);
+  console.log("In redux state:",user)
   const [filePreview, setFilePreview] = useState();
   const [file, setFile] = useState(null);
   const [editorContent,setEditorContent]=useState("")
@@ -81,12 +85,15 @@ const AddBlog = () => {
   }, [titleValue]);
 
   async function onSubmit(values) {
+    const newValues={...values,author:user.user?._id}
+    console.log(newValues);
     const formData = new FormData();
     if (file) {
       formData.append("image", file);
     }
 
-    const dataToSend = JSON.stringify(values);
+    const dataToSend = JSON.stringify(newValues);
+
     formData.append("data", dataToSend);
 
     const url = `${import.meta.env.VITE_URL}/blog/add-blog`;
@@ -140,13 +147,6 @@ const AddBlog = () => {
     setEditorContent(data);
     form.setValue("blogContent", data);
   }
-
-  //Whenever the form's blogContent becomes empty, also clear the editorContent state
-  // useEffect(()=>{
-  //   if(!form.watch("blogContent")){
-  //     setEditorContent("");
-  //   }
-  // },[form.watch("blogContent")])
   if (loading) return <Loading />;
 
   return (
@@ -215,7 +215,7 @@ const AddBlog = () => {
                   <FormItem>
                     <FormLabel>Slug</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter Slug" {...field} />
+                      <Input placeholder="Enter Slug" {...field} readOnly className="bg-gray-100 cursor-not-allowed" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
