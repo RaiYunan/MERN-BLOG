@@ -27,10 +27,16 @@ import {
 import { useFetch } from "@/hooks/useFetch";
 import Loading from "@/components/Loading";
 import Editor from "@/components/Editor";
+import { showToast } from "@/helpers/showToast";
+import { useNavigate } from "react-router-dom";
+import { RouteBlog } from "@/helpers/RouteName";
 
 const AddBlog = () => {
+  const navigate = useNavigate();
   const [filePreview, setFilePreview] = useState();
   const [file, setFile] = useState(null);
+  const [editorContent,setEditorContent]=useState("")
+  const [editorKey,setEditorKey]=useState(0)
   const url = `${import.meta.env.VITE_URL}/category/all-category`;
   const {
     data: categoryData,
@@ -81,24 +87,32 @@ const AddBlog = () => {
     }
 
     const dataToSend = JSON.stringify(values);
-    formData.append("data",dataToSend)
-    console.log("lauda")
+    formData.append("data", dataToSend);
 
-    const url=`${import.meta.env.VITE_URL}/blog/add-blog`;
+    const url = `${import.meta.env.VITE_URL}/blog/add-blog`;
     try {
-      console.log("lund")
-      const response=await fetch(url,{
-        method:"POST",
-        credentials:"include",
-        body:formData
-      })
-      console.log(response)
+      const response = await fetch(url, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
 
-      const responseData=await response.json()
-      console.log(responseData)
+      const responseData = await response.json();
+      console.log(responseData);
+
+      form.reset({
+        title: "",
+        slug: "",
+        category: "",
+        blogContent: "",
+      });
+      setEditorContent("")
+      setEditorKey((prev)=>prev+1);
+      setFilePreview(null);
+      setFile(null);
+      showToast("success", responseData.message);
     } catch (error) {
-      console.log(error.message)
-      
+      console.log(error.message);
     }
   }
   function handleFileSelection(files) {
@@ -123,8 +137,16 @@ const AddBlog = () => {
 
   function handleEditorData(event, editor) {
     const data = editor.getData();
+    setEditorContent(data);
     form.setValue("blogContent", data);
   }
+
+  //Whenever the form's blogContent becomes empty, also clear the editorContent state
+  // useEffect(()=>{
+  //   if(!form.watch("blogContent")){
+  //     setEditorContent("");
+  //   }
+  // },[form.watch("blogContent")])
   if (loading) return <Loading />;
 
   return (
@@ -142,7 +164,7 @@ const AddBlog = () => {
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select a Category" />
@@ -239,7 +261,7 @@ const AddBlog = () => {
                     <FormLabel>Blog Content</FormLabel>
                     <FormControl>
                       {/* <Input placeholder="Enter Title" {...field} /> */}
-                      <Editor initialData="" onChange={handleEditorData} />
+                      <Editor key={editorKey} initialData={editorContent} onChange={handleEditorData} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
