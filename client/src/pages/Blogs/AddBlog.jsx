@@ -32,15 +32,14 @@ import { useNavigate } from "react-router-dom";
 import { RouteBlog } from "@/helpers/RouteName";
 import { useSelector } from "react-redux";
 
-
 const AddBlog = () => {
   const navigate = useNavigate();
-  const user=useSelector((state)=>state.user);
-  console.log("In redux state:",user)
+  const user = useSelector((state) => state.user);
+  console.log("In redux state:", user);
   const [filePreview, setFilePreview] = useState();
   const [file, setFile] = useState(null);
-  const [editorContent,setEditorContent]=useState("")
-  const [editorKey,setEditorKey]=useState(0)
+  const [editorContent, setEditorContent] = useState("");
+  const [editorKey, setEditorKey] = useState(0);
   const url = `${import.meta.env.VITE_URL}/category/all-category`;
   const {
     data: categoryData,
@@ -85,7 +84,7 @@ const AddBlog = () => {
   }, [titleValue]);
 
   async function onSubmit(values) {
-    const newValues={...values,author:user.user?._id}
+    const newValues = { ...values, author: user.user?._id };
     console.log(newValues);
     const formData = new FormData();
     if (file) {
@@ -105,21 +104,30 @@ const AddBlog = () => {
       });
 
       const responseData = await response.json();
-      console.log(responseData);
+      if(!response.ok){
+        showToast("error",responseData.message||"Failed to create blog");
+        await new Promise((resolve)=>setTimeout(resolve,2000))
+        return;
 
+      }
+
+      showToast("success", responseData.message);
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       form.reset({
         title: "",
         slug: "",
         category: "",
         blogContent: "",
       });
-      setEditorContent("")
-      setEditorKey((prev)=>prev+1);
+      setEditorContent("");
+      setEditorKey((prev) => prev + 1);
       setFilePreview(null);
       setFile(null);
-      showToast("success", responseData.message);
+
+      navigate(RouteBlog, { replace: true });
     } catch (error) {
-      console.log(error.message);
+      showToast("error","Network error - please try again")
+      await new Promise((resolve)=>setTimeout(resolve,2000))
     }
   }
   function handleFileSelection(files) {
@@ -215,7 +223,12 @@ const AddBlog = () => {
                   <FormItem>
                     <FormLabel>Slug</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter Slug" {...field} readOnly className="bg-gray-100 cursor-not-allowed" />
+                      <Input
+                        placeholder="Enter Slug"
+                        {...field}
+                        readOnly
+                        className="bg-gray-100 cursor-not-allowed"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -261,7 +274,11 @@ const AddBlog = () => {
                     <FormLabel>Blog Content</FormLabel>
                     <FormControl>
                       {/* <Input placeholder="Enter Title" {...field} /> */}
-                      <Editor key={editorKey} initialData={editorContent} onChange={handleEditorData} />
+                      <Editor
+                        key={editorKey}
+                        initialData={editorContent}
+                        onChange={handleEditorData}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

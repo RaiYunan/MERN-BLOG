@@ -107,7 +107,7 @@ const AddCategory = () => {
                     <FormItem>
                       <FormLabel>Slug</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Slug" {...field} />
+                        <Input placeholder="Enter Slug" {...field} readOnly className="bg-gray-100 cursor-not-allowed" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

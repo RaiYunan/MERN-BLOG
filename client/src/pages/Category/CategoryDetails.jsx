@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table";
 import { useFetch } from "@/hooks/useFetch";
 import Loading from "@/components/Loading";
-import { FaRegEdit } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { showToast } from "@/helpers/showToast";
 
@@ -93,11 +93,11 @@ const CategoryDetails = () => {
                           <Button
                             asChild
                             variant="outline"
-                            className="hover:text-white hover:bg-violet-500 cursor-pointer"
+                            className="cursor-pointer"
                             size="sm"
                           >
                             <Link to={RouteEditCategory(category._id)}>
-                              <FaRegEdit />
+                              <FaEdit />
                             </Link>
                           </Button>
                           <Button
