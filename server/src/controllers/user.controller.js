@@ -81,3 +81,14 @@ export const updateUser = asyncHandler(async (req, res, next) => {
     .status(200)
     .json(new ApiResponse(200, updatedUser, "User updated successfully"));
 });
+
+export const getAllUsers=asyncHandler(async(req,res,next)=>{
+  const users=await User.find().lean().exec();
+  //Find all users, return plain JS objects (not Mongoose documents), and execute immediately
+
+  if(!users){
+    throw new ApiError(404,"User(s) not found.");
+  }
+
+  res.status(200).json(new ApiResponse(200,users,"Users retrieved successfully."));
+})
