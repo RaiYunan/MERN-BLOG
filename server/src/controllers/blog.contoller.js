@@ -17,11 +17,23 @@ export const getAllBlogs = asyncHandler(async (req, res, next) => {
       new ApiResponse(
         200,
         blogs,
-        blogs.length > 0? "Blogs retrieved successfully." : "No blogs found."
+        blogs.length > 0 ? "Blogs retrieved successfully." : "No blogs found."
       )
     );
 });
-export const showBlog = asyncHandler(async (req, res, next) => {});
+export const showBlog = asyncHandler(async (req, res, next) => {
+  const { blog_id } = req.params;
+  if (!blog_id) {
+    throw new ApiError(200, "Blog ID is missing.");
+  }
+
+  const blog = await Blog.findById(blog_id);
+  console.log(blog);
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, blog, blog ? "Blog retrieved sucessfully." : "Blog not found"));
+});
 
 export const editBlog = asyncHandler(async (req, res, next) => {});
 
