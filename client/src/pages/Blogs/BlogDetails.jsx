@@ -50,17 +50,17 @@ const BlogDetails = () => {
   const ConfirmDialog = ({ open, onClose, onConfirm, title, description }) => {
     return (
       <Dialog open={open} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-[400px]">
+        <DialogContent className="sm:max-w-[400px] px-10 py-12 flex-col gap-6">
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
 
           <DialogFooter className="flex justify-end gap-2">
-            <Button variant="outline" onClick={onClose}>
+            <Button variant="outline" onClick={onClose} className="cursor-pointer">
               Cancel
             </Button>
-            <Button variant="destructive" onClick={onConfirm}>
+            <Button variant="destructive" onClick={onConfirm} className="cursor-pointer">
               Confirm
             </Button>
           </DialogFooter>

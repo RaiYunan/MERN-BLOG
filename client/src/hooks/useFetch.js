@@ -20,6 +20,7 @@ export const useFetch=(url,options={},dependencies=[])=>{
                 if(!response.ok){
                    throw new Error(`Error ${response.status}: ${response.statusText}`)
                 }
+                console.log("ResponseData\n",responseData)
                 setData(responseData.data)
                 setError(null) 
                 return;   
