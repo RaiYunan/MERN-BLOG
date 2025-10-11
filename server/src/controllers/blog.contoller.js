@@ -35,7 +35,35 @@ export const showBlog = asyncHandler(async (req, res, next) => {
     .json(new ApiResponse(200, blog, blog ? "Blog retrieved sucessfully." : "Blog not found"));
 });
 
-export const editBlog = asyncHandler(async (req, res, next) => {});
+export const editBlog = asyncHandler(async (req, res, next) => {
+  const { blog_id } = req.params;
+  if (!blog_id) {
+    throw new ApiError(200, "Blog ID is missing.");
+  }
+  const data=JSON.parse(req.body.data);
+  const imagePath=req.file?.path;
+  let uploadResult;
+  if(imagePath){
+    uploadResult=await uploadOnCloudinary(imagePath);
+  }
+
+  const updatedBlog=await Blog.findByIdAndUpdate(blog_id,{
+    $set:{
+      category:data.category,
+      title:data.title,
+      slug:data.slug,
+      blogContent:encode(data.blogContent),
+      author:data.author,
+      ...(uploadResult && { featuredImage: uploadResult.secure_url })
+    }
+    
+  },{new:true})
+  console.log("Updated Blog\n",updatedBlog)
+
+  res.status(200).json(new ApiResponse(200,updatedBlog,"Blog Updated Successfully."))
+});
+
+
 
 export const addBlog = asyncHandler(async (req, res, next) => {
   const data = JSON.parse(req.body.data);

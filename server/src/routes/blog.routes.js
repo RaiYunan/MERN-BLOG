@@ -5,7 +5,7 @@ import { upload } from "../middlewares/multer.middleware.js";
 const router=Router()
 
 router.route("/add-blog").post(upload.single("image"),addBlog);
-router.route("edit-log/:blog_id").patch(editBlog)
+router.route("/edit-blog/:blog_id").post(upload.single("image"),editBlog)
 router.route("/delete-blog/:blog_id").delete(deleteBlog)
 router.route("/all-blogs").get(getAllBlogs)
 router.route("/show-blog/:blog_id").get(showBlog)
