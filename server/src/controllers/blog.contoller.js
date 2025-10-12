@@ -32,7 +32,13 @@ export const showBlog = asyncHandler(async (req, res, next) => {
 
   res
     .status(200)
-    .json(new ApiResponse(200, blog, blog ? "Blog retrieved sucessfully." : "Blog not found"));
+    .json(
+      new ApiResponse(
+        200,
+        blog,
+        blog ? "Blog retrieved sucessfully." : "Blog not found"
+      )
+    );
 });
 
 export const editBlog = asyncHandler(async (req, res, next) => {
@@ -40,30 +46,33 @@ export const editBlog = asyncHandler(async (req, res, next) => {
   if (!blog_id) {
     throw new ApiError(200, "Blog ID is missing.");
   }
-  const data=JSON.parse(req.body.data);
-  const imagePath=req.file?.path;
+  const data = JSON.parse(req.body.data);
+  const imagePath = req.file?.path;
   let uploadResult;
-  if(imagePath){
-    uploadResult=await uploadOnCloudinary(imagePath);
+  if (imagePath) {
+    uploadResult = await uploadOnCloudinary(imagePath);
   }
 
-  const updatedBlog=await Blog.findByIdAndUpdate(blog_id,{
-    $set:{
-      category:data.category,
-      title:data.title,
-      slug:data.slug,
-      blogContent:encode(data.blogContent),
-      author:data.author,
-      ...(uploadResult && { featuredImage: uploadResult.secure_url })
-    }
-    
-  },{new:true})
-  console.log("Updated Blog\n",updatedBlog)
+  const updatedBlog = await Blog.findByIdAndUpdate(
+    blog_id,
+    {
+      $set: {
+        category: data.category,
+        title: data.title,
+        slug: data.slug,
+        blogContent: encode(data.blogContent),
+        author: data.author,
+        ...(uploadResult && { featuredImage: uploadResult.secure_url }),
+      },
+    },
+    { new: true }
+  );
+  console.log("Updated Blog\n", updatedBlog);
 
-  res.status(200).json(new ApiResponse(200,updatedBlog,"Blog Updated Successfully."))
+  res
+    .status(200)
+    .json(new ApiResponse(200, updatedBlog, "Blog Updated Successfully."));
 });
-
-
 
 export const addBlog = asyncHandler(async (req, res, next) => {
   const data = JSON.parse(req.body.data);
@@ -90,4 +99,17 @@ export const addBlog = asyncHandler(async (req, res, next) => {
   res.status(200).json(new ApiResponse(200, blog, "Blog added successfully"));
 });
 
-export const deleteBlog = asyncHandler(async (req, res, next) => {});
+export const deleteBlog = asyncHandler(async (req, res, next) => {
+  const { blog_id } = req.params;
+  if (!blog_id) {
+    throw new ApiError(404, "Blog ID is misssing.");
+  }
+  const deletedBlog = await Blog.findByIdAndDelete(blog_id);
+  if (!deletedBlog) {
+    throw new ApiError(404, "No blog found with the provided ID.");
+  }
+
+  console.log("🗑️ Deleted blog details:\n", deletedBlog);
+
+  res.status(200).json(new ApiResponse(200, {}, "Blog deleted successfully."));
+});
