@@ -34,18 +34,26 @@ import Loading from "@/components/Loading";
 import { FaEye } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { showToast } from "@/helpers/showToast";
 
 const BlogDetails = () => {
+  const [refreshData, setRefreshData] = useState(false);
+  const [blogToDelete, setBlogToDelete] = useState(null);
+  const [open, setOpen] = useState(false);
+
   const blog_Url = `${import.meta.env.VITE_URL}/blog/all-blogs`;
   const {
     data: blogData,
     loading: blogLoading,
     error: blogError,
-  } = useFetch(blog_Url, {
-    method: "GET",
-    credentials: "include",
-  });
-  const [open, setOpen] = useState(false);
+  } = useFetch(
+    blog_Url,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+    [refreshData]
+  );
 
   const ConfirmDialog = ({ open, onClose, onConfirm, title, description }) => {
     return (
@@ -57,10 +65,18 @@ const BlogDetails = () => {
           </DialogHeader>
 
           <DialogFooter className="flex justify-end gap-2">
-            <Button variant="outline" onClick={onClose} className="cursor-pointer">
+            <Button
+              variant="outline"
+              onClick={onClose}
+              className="cursor-pointer"
+            >
               Cancel
             </Button>
-            <Button variant="destructive" onClick={onConfirm} className="cursor-pointer">
+            <Button
+              variant="destructive"
+              onClick={onConfirm}
+              className="cursor-pointer"
+            >
               Confirm
             </Button>
           </DialogFooter>
@@ -69,9 +85,43 @@ const BlogDetails = () => {
     );
   };
 
-  const handleDelete = (blogId) => {
-    console.log("✅ Blog deleted successfully!", blogId);
+  const openDeleteDialog = (blogId) => {
+    setBlogToDelete(blogId);
+    setOpen(true);
+  };
+
+  const closeDeleteDialog = () => {
     setOpen(false);
+    setBlogToDelete(null);
+  };
+
+  const handleDelete = async () => {
+    if (!blogToDelete) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_URL}/blog/delete-blog/${blogToDelete}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+      const responseData = await response.json();
+      console.log("responseData inside HandleDelete\n", responseData);
+
+      if (!response.ok) {
+        showToast("error", responseData.message);
+        return;
+      }
+      closeDeleteDialog();
+      showToast("success", responseData.message || "Blog deleted successfully");
+      setRefreshData((prev) => !prev);
+    } catch (error) {
+      console.error("Delete error:", error);
+      showToast("error", "Failed to delete blog. Please try again.");
+    }
   };
 
   if (blogLoading) return <Loading />;
@@ -153,17 +203,10 @@ const BlogDetails = () => {
                               size="sm"
                               variant="destructive"
                               className="cursor-pointer"
-                              onClick={()=>setOpen(true)}
+                              onClick={() => openDeleteDialog(blog._id)}
                             >
                               <MdDelete />
                             </Button>
-                            <ConfirmDialog
-                              open={open}
-                              onClose={() => setOpen(false)}
-                              onConfirm={() => handleDelete(blog._id)}
-                              title="Delete this blog?"
-                              description="This action cannot be undone. The blog will be permanently deleted."
-                            />
                           </div>
                         </TableCell>
                       </TableRow>
@@ -174,6 +217,14 @@ const BlogDetails = () => {
           </CardContent>
         </div>
       </Card>
+
+      <ConfirmDialog
+        open={open}
+        onClose={closeDeleteDialog}
+        onConfirm={handleDelete}
+        title="Delete this blog?"
+        description="This action cannot be undone. The blog will be permanently deleted."
+      />
     </div>
   );
 };
