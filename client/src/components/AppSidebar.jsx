@@ -17,9 +17,25 @@ import { FaBlogger } from "react-icons/fa6";
 import { FaComments } from "react-icons/fa";
 import { FaUsers } from "react-icons/fa";
 import { GoDotFill } from "react-icons/go";
-import { RouteBlog, RouteCategoryDetails, RouteIndex } from "@/helpers/RouteName";
+import {
+  RouteBlog,
+  RouteCategoryDetails,
+  RouteIndex,
+} from "@/helpers/RouteName";
+import Loading from "./Loading";
+import { useFetch } from "@/hooks/useFetch";
 
 const AppSideBar = () => {
+  const url = `${import.meta.env.VITE_URL}/category/all-category`;
+  const {
+    data: categoryData,
+    loading,
+    error,
+  } = useFetch(url, {
+    method: "GET",
+    credentials: "include",
+  });
+  if (!categoryData && categoryData.length == 0) return <Loading />;
   return (
     <Sidebar>
       <SidebarHeader className="bg-white">
@@ -28,7 +44,7 @@ const AppSideBar = () => {
         </div>
       </SidebarHeader>
       <SidebarContent className="bg-white">
-        <SidebarGroup>
+        <SidebarGroup className="">
           <SidebarMenu>
             <SidebarMenuItem>
               <Link to={RouteIndex}>
@@ -78,14 +94,22 @@ const AppSideBar = () => {
         </SidebarGroup>
         <SidebarGroup>
           <SidebarGroupLabel>Categories</SidebarGroupLabel>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton>
-                <GoDotFill />
-                <Link to="">Category Item</Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
+          {categoryData &&
+            categoryData.length > 0 &&
+            categoryData.map((category) => {
+              return (
+                <SidebarMenu>
+                  <SidebarMenuItem >
+                    <Link to="">
+                      <SidebarMenuButton className="cursor-pointer">
+                        <GoDotFill />
+                        {category.name}
+                      </SidebarMenuButton>
+                    </Link>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              );
+            })}
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>

@@ -9,6 +9,7 @@ export const getAllBlogs = asyncHandler(async (req, res, next) => {
   const blogs = await Blog.find()
     .populate("author", "name email")
     .populate("category", "name")
+    .sort({createdAt:-1})
     .lean()
     .exec();
   res

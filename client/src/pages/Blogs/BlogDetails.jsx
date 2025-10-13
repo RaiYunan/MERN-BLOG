@@ -150,8 +150,7 @@ const BlogDetails = () => {
               </TableHeader>
 
               <TableBody>
-                {blogData &&
-                  blogData.length > 0 &&
+                {blogData && blogData.length > 0 ? (
                   blogData.map((blog) => {
                     return (
                       <TableRow key={blog._id}>
@@ -211,7 +210,17 @@ const BlogDetails = () => {
                         </TableCell>
                       </TableRow>
                     );
-                  })}
+                  })
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={6}
+                      className="text-center text-muted-foreground pt-8"
+                    >
+                      No Blogs available. Create your first blog!!
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </CardContent>
