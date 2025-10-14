@@ -35,7 +35,7 @@ const AppSideBar = () => {
     method: "GET",
     credentials: "include",
   });
-  if (!categoryData && categoryData.length == 0) return <Loading />;
+  if (!categoryData && categoryData?.length == 0) return <Loading />;
   return (
     <Sidebar>
       <SidebarHeader className="bg-white">
@@ -95,7 +95,7 @@ const AppSideBar = () => {
         <SidebarGroup>
           <SidebarGroupLabel>Categories</SidebarGroupLabel>
           {categoryData &&
-            categoryData.length > 0 &&
+            categoryData?.length > 0 &&
             categoryData.map((category) => {
               return (
                 <SidebarMenu>
