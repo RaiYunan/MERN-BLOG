@@ -9,7 +9,7 @@ export const getAllBlogs = asyncHandler(async (req, res, next) => {
   const blogs = await Blog.find()
     .populate("author", "name email")
     .populate("category", "name")
-    .sort({createdAt:-1})
+    .sort({ createdAt: -1 })
     .lean()
     .exec();
   res
@@ -22,13 +22,32 @@ export const getAllBlogs = asyncHandler(async (req, res, next) => {
       )
     );
 });
+export const getBlogBySlug = asyncHandler(async (req, res, next) => {
+  const { category, slug } = req.params;
+
+  const blog = await Blog.findOne({ slug: slug })
+    .populate("author", "email name")
+    .populate("category", "name");
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        blog,
+        blog ? "Blog retrieved successfully" : "Blog not found"
+      )
+    );
+});
 export const showBlog = asyncHandler(async (req, res, next) => {
   const { blog_id } = req.params;
   if (!blog_id) {
     throw new ApiError(200, "Blog ID is missing.");
   }
 
-  const blog = await Blog.findById(blog_id);
+  const blog = await Blog.findById(blog_id)
+    .populate("author", "name email")
+    .populate("category", "name");
   console.log(blog);
 
   res
