@@ -20,9 +20,10 @@ export const RouteBlogEdit=(blogID)=>{
     }
     return `/blog/edit/:blogID`
 }
-export const RouteBlogShow=(blogID)=>{
-    if(blogID){
-        return `/blog/show/${blogID}`
+
+export const RouteBlogShow=(category,blogSlug)=>{
+    if(!category || !blogSlug){
+        return `/blog/:catgeory/:slug`
     }
-    return `/blog/show/:blogID`
+    return `/blog/${encodeURIComponent(category)}/${encodeURIComponent(blogSlug)}`
 }
