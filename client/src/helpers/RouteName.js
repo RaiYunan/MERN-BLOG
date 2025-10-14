@@ -20,3 +20,9 @@ export const RouteBlogEdit=(blogID)=>{
     }
     return `/blog/edit/:blogID`
 }
+export const RouteBlogShow=(blogID)=>{
+    if(blogID){
+        return `/blog/show/${blogID}`
+    }
+    return `/blog/show/:blogID`
+}
