@@ -29,12 +29,22 @@ export const getBlogBySlug = asyncHandler(async (req, res, next) => {
     .populate("author", "email name")
     .populate("category", "name");
 
+  const relatedBlogs = await Blog.find({
+    category: blog.category._id,
+    _id: { $ne: blog._id }
+  })
+    .populate('category', 'name slug')
+    .populate('author', 'name')
+    .select('title slug featuredImage category author createdAt')
+    .limit(5)
+    .sort({ createdAt: -1 });
+
   res
     .status(200)
     .json(
       new ApiResponse(
         200,
-        blog,
+        {blog,relatedBlogs},
         blog ? "Blog retrieved successfully" : "Blog not found"
       )
     );

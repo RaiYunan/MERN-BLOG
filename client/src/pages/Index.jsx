@@ -13,7 +13,7 @@ const Index = () => {
   if (error) return <p className="text-center text-red-500">Error loading blogs!</p>;
 
   return (
-    <div className="flex flex-wrap gap-6 p-6 bg-gray-50 min-h-screen">
+    <div className="flex flex-wrap gap-5 max-w-fit mx-auto justify-between bg-gray-50 min-h-screen">
       {blogData?.length > 0 ? (
         blogData.map((blog) => (
           <Link to={RouteBlogShow(blog?.category?.name,blog?.slug)} key={blog._id}>

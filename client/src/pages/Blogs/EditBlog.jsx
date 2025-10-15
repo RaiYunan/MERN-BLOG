@@ -85,7 +85,7 @@ const EditBlog = () => {
     if (blogData && blogData.blogContent) {
       const encoded = decode(blogData?.blogContent);
       form.reset({
-        category: blogData?.category || "",
+        category: blogData?.category._id || "",
         title: blogData?.title || "",
         slug: blogData?.slug || "",
         blogContent: encoded || "",

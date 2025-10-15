@@ -8,7 +8,7 @@ const BlogCard = ({ featuredImage, category, title, blogContent }) => {
     return textarea.value;
   };
   return (
-    <Card className="w-[260px] rounded-xl shadow-md hover:shadow-xl hover:-translate-y-1 transition-all bg-white pt-0">
+    <Card className="w-[295px] rounded-xl shadow-md hover:shadow-xl hover:-translate-y-1 transition-all bg-white pt-0  h-[330px]">
       <CardContent className="p-0 cursor-pointer">
         {/* Image container for zoom effect */}
         <div className="overflow-hidden rounded-t-lg p-0">
