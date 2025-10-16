@@ -8,7 +8,7 @@ import { encode } from "entities";
 export const getAllBlogs = asyncHandler(async (req, res, next) => {
   const blogs = await Blog.find()
     .populate("author", "name email")
-    .populate("category", "name")
+    .populate("category", "name slug")
     .sort({ createdAt: -1 })
     .lean()
     .exec();
@@ -23,11 +23,11 @@ export const getAllBlogs = asyncHandler(async (req, res, next) => {
     );
 });
 export const getBlogBySlug = asyncHandler(async (req, res, next) => {
-  const { category, slug } = req.params;
+  const { categorySlug, blogSlug } = req.params;
 
-  const blog = await Blog.findOne({ slug: slug })
+  const blog = await Blog.findOne({ slug: blogSlug })
     .populate("author", "email name")
-    .populate("category", "name");
+    .populate("category", "name slug");
 
   const relatedBlogs = await Blog.find({
     category: blog.category._id,
@@ -57,7 +57,7 @@ export const showBlog = asyncHandler(async (req, res, next) => {
 
   const blog = await Blog.findById(blog_id)
     .populate("author", "name email")
-    .populate("category", "name");
+    .populate("category", "name slug");
   console.log(blog);
 
   res

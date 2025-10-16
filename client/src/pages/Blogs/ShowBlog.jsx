@@ -7,9 +7,9 @@ import React from "react";
 import { useParams } from "react-router-dom";
 
 const ShowBlog = () => {
-  const { category, slug } = useParams();
+  const { categorySlug, blogSlug } = useParams();
 
-  const url = `${import.meta.env.VITE_URL}/blog/${category}/${slug}`;
+  const url = `${import.meta.env.VITE_URL}/blog/${categorySlug}/${blogSlug}`;
   const {
     data: blogData,
     loading: bloogLoading,

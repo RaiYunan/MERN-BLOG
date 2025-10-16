@@ -21,9 +21,9 @@ export const RouteBlogEdit=(blogID)=>{
     return `/blog/edit/:blogID`
 }
 
-export const RouteBlogShow=(category,blogSlug)=>{
-    if(!category || !blogSlug){
-        return `/blog/:catgeory/:slug`
+export const RouteBlogShow=(categorySlug,blogSlug)=>{
+    if(!categorySlug || !blogSlug){
+        return `/blog/:categorySlug/:blogSlug`
     }
-    return `/blog/${encodeURIComponent(category)}/${encodeURIComponent(blogSlug)}`
+    return `/blog/${encodeURIComponent(categorySlug)}/${encodeURIComponent(blogSlug)}`
 }

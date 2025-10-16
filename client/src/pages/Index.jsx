@@ -16,7 +16,7 @@ const Index = () => {
     <div className="flex flex-wrap gap-5 max-w-fit mx-auto justify-between bg-gray-50 min-h-screen">
       {blogData?.length > 0 ? (
         blogData.map((blog) => (
-          <Link to={RouteBlogShow(blog?.category?.name,blog?.slug)} key={blog._id}>
+          <Link to={RouteBlogShow(blog?.category?.slug,blog?.slug)} key={blog._id}>
           <BlogCard
             key={blog._id}
             featuredImage={blog.featuredImage}
