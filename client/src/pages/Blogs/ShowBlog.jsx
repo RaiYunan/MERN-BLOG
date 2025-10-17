@@ -4,10 +4,12 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useFetch } from "@/hooks/useFetch";
 import { decode } from "entities";
 import React from "react";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
 const ShowBlog = () => {
   const { categorySlug, blogSlug } = useParams();
+  const user=useSelector((state)=>state.user);
 
   const url = `${import.meta.env.VITE_URL}/blog/${categorySlug}/${blogSlug}`;
   const {
@@ -63,7 +65,7 @@ const ShowBlog = () => {
           </div>
           {/* Comment Section */}
           <div>
-            <Comment/>
+            <Comment blogId={blogData?.blog._id} authorId={user?.user._id}/>
           </div>
         </div>
         </CardContent>
