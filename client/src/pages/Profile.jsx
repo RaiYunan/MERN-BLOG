@@ -192,6 +192,7 @@ const Profile = () => {
                     src={
                       filePreview ? filePreview : userData?.avatar || userImage
                     }
+                    className="w-full h-full object-contain rounded-full"
                   />
                   <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 duration-300 cursor-pointer">
                     <IoCameraOutline className="text-xl text-white transform transition-transform duration-300 group-hover:scale-110" />
