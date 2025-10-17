@@ -23,19 +23,28 @@ export const getAllBlogs = asyncHandler(async (req, res, next) => {
     );
 });
 export const getBlogBySlug = asyncHandler(async (req, res, next) => {
-  const { categorySlug, blogSlug } = req.params;
+  const { blogSlug } = req.params;
 
   const blog = await Blog.findOne({ slug: blogSlug })
     .populate("author", "email name")
     .populate("category", "name slug");
+    console.log("getBLogbySlug:-\n",blog)
+      // ✅ ADD NULL CHECK HERE - This is the fix!
+  if (!blog) {
+    throw new ApiError(404, "Blog not found");
+  }
 
+  // ✅ Also check if category was populated
+  if (!blog.category) {
+    throw new ApiError(404, "Blog category not found");
+  }
   const relatedBlogs = await Blog.find({
     category: blog.category._id,
-    _id: { $ne: blog._id }
+    _id: { $ne: blog._id },
   })
-    .populate('category', 'name slug')
-    .populate('author', 'name')
-    .select('title slug featuredImage category author createdAt')
+    .populate("category", "name slug")
+    .populate("author", "name")
+    .select("title slug featuredImage category author createdAt")
     .limit(5)
     .sort({ createdAt: -1 });
 
@@ -44,7 +53,7 @@ export const getBlogBySlug = asyncHandler(async (req, res, next) => {
     .json(
       new ApiResponse(
         200,
-        {blog,relatedBlogs},
+        { blog, relatedBlogs },
         blog ? "Blog retrieved successfully" : "Blog not found"
       )
     );

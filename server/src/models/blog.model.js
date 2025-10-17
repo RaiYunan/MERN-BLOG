@@ -32,6 +32,15 @@ const blogSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    comments:[{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"Comment"
+    }],
+    commentCount:{
+      type:Number,
+      default:0,
+      
+    }
   },
   { timestamps: true }
 );
