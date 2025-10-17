@@ -65,7 +65,7 @@ const ShowBlog = () => {
           </div>
           {/* Comment Section */}
           <div>
-            <Comment blogId={blogData?.blog._id} authorId={user?.user._id}/>
+            <Comment blogId={blogData?.blog._id} authorId={user?.user._id || user.user?.data?._id}/>
           </div>
         </div>
         </CardContent>

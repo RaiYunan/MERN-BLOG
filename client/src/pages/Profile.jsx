@@ -31,7 +31,7 @@ const Profile = () => {
   const [file, setFile] = useState();
 
   const user = useSelector((state) => state.user);
-  const userId = user?.user?._id;
+  const userId = user?.user?.data?._id || user?.user?._id;
   const {
     data: userData,
     loading,
@@ -60,6 +60,7 @@ const Profile = () => {
     password: z.string().min(8, "Password must be at least 8 characters long"),
   });
 
+  console.log("User without google login",userData)
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {

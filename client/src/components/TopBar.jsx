@@ -75,7 +75,7 @@ const TopBar = () => {
               <DropdownMenuTrigger>
                 <Avatar className="cursor-pointer">
                   <AvatarImage
-                    src={user.user?.avatar || userImage}
+                    src={user.user?.avatar || user.user?.data?.avatar || userImage}
                     alt={user.user?.name || "User"}
                     crossOrigin="anonymous"
                     onError={(e) =>
@@ -93,8 +93,8 @@ const TopBar = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuLabel>
-                  <p className="text-base">{user.user?.name}</p>
-                  <p className="text-xs">{user.user?.email}</p>
+                  <p className="text-base">{user.user?.name || user.user?.data?.name}</p>
+                  <p className="text-xs">{user.user?.email || user.user?.data?.email}</p>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild className="cursor-pointer">

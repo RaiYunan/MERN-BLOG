@@ -139,7 +139,7 @@ const Comment = ({ blogId, authorId }) => {
           />
           <Button
             type="submit"
-            className="px-6 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white transition-colors block text-left"
+            className="px-6 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white transition-colors block text-left cursor-pointer"
             disabled={commentContent.trim() === ""}
           >
             Comment
