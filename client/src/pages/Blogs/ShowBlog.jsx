@@ -3,26 +3,55 @@ import Loading from "@/components/Loading";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useFetch } from "@/hooks/useFetch";
 import { decode } from "entities";
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { FaRegHeart } from "react-icons/fa6";
+import { FcLike } from "react-icons/fc";
+import { FaRegComment } from "react-icons/fa6";
 
 const ShowBlog = () => {
   const { categorySlug, blogSlug } = useParams();
-  const user=useSelector((state)=>state.user);
+  const user = useSelector((state) => state.user);
+  const [likeBlog, setLikeBlog] = useState(false);
 
   const url = `${import.meta.env.VITE_URL}/blog/${categorySlug}/${blogSlug}`;
   const {
     data: blogData,
-    loading: bloogLoading,
+    loading: blogLoading,
     error: blogError,
   } = useFetch(url, {
     method: "GET",
     credentials: "include",
   });
 
-  console.log("blogData\n", blogData);
-  if (bloogLoading) return <Loading />;
+  async function handleLike() {
+    setLikeBlog((prev) => !prev);
+
+    const blogId = blogData?.blog._id;
+    const authorId = user?.user._id || user?.user?.data._id;
+    const dataToSend = { blogId, authorId };
+
+    if (!likeBlog) {
+      try {
+        const url = `${
+          import.meta.env.VITE_URL
+        }/blog/${categorySlug}/${blogSlug}/like`;
+        const repsonse = await fetch(url, {
+          method: "POST",
+          headers: { "Content-type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(dataToSend),
+        });
+        const responseData = await repsonse.json();
+        console.log(responseData);
+      } catch (error) {
+        showToast("error", error.message);
+        console.log("Error while handling likes\n", error.message);
+      }
+    }
+  }
+  if (blogLoading) return <Loading />;
   return (
     <div className="flex gap-4 justify-between max-w-full">
       <Card className="flex-[0.63] min-w-0 rounded-md text-center">
@@ -43,6 +72,33 @@ const ShowBlog = () => {
               {blogData?.blog?.author?.name}
             </span>
           </div>
+          <div className="flex gap-4">
+            {/*Like and Comment Section*/}
+            <div className="flex items-center cursor-pointer">
+              <span className="flex items-center gap-1">
+                <button className="p-0 cursor-pointer" onClick={handleLike}>
+                  {likeBlog ? (
+                    <FcLike size="16" />
+                  ) : (
+                    <FaRegHeart
+                      size="16"
+                      className=" text-gray-600 hover:text-red-400 transition-colors"
+                    />
+                  )}
+                </button>
+                <span className="text-[14px] text-gray-600">1</span>
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1 text-gray-600 ">
+              <button className="cursor-pointer">
+                <FaRegComment />
+              </button>
+              <p className="text-[14px] cursor-pointer">
+                {blogData?.blog.commentCount}
+              </p>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="mb-6">
@@ -58,30 +114,37 @@ const ShowBlog = () => {
             }}
             className="text-left px-8"
           ></div>
-           <div>
-            {/* Separartor */}
-          <div className='border flex justify-center items-center mt-5'>
-            <span className='absolute bg-white text-sm '></span>
-          </div>
-          {/* Comment Section */}
           <div>
-            <Comment blogId={blogData?.blog._id} authorId={user?.user._id || user.user?.data?._id}/>
+            {/* Separartor */}
+            <div className="border flex justify-center items-center mt-5">
+              <span className="absolute bg-white text-sm "></span>
+            </div>
+            {/* Comment Section */}
+            <div>
+              <Comment
+                blogId={blogData?.blog._id}
+                authorId={user?.user._id || user.user?.data?._id}
+              />
+            </div>
           </div>
-        </div>
         </CardContent>
       </Card>
       <Card className="flex-[0.4] min-w-0 w-[350px] rounded-md max-h-fit gap-2 m-0 fixed right-[15px] ">
-        <CardHeader className='font-semibold text-xl'>Related Blogs</CardHeader>
+        <CardHeader className="font-semibold text-xl">Related Blogs</CardHeader>
         <CardContent className="cursor-pointer">
           {blogData?.relatedBlogs.length > 0 ? (
             blogData.relatedBlogs.map((relatedBlog) => {
               return (
                 <div className="flex gap-2 mt-3 items-center">
-                  <img src={relatedBlog?.featuredImage} alt="" className="flex-[0.35] min-w-0 h-[50px]" />
-                  <p className="flex-[0.65] min-w-0 text-sm">{relatedBlog?.title}</p>
-                  
+                  <img
+                    src={relatedBlog?.featuredImage}
+                    alt=""
+                    className="flex-[0.35] min-w-0 h-[50px]"
+                  />
+                  <p className="flex-[0.65] min-w-0 text-sm">
+                    {relatedBlog?.title}
+                  </p>
                 </div>
-                
               );
             })
           ) : (
