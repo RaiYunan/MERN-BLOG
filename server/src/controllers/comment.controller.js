@@ -2,7 +2,7 @@ import { Blog } from "../models/blog.model.js";
 import { Comment } from "../models/comment.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { asyncHandler } from "../utils/AsyncHandler.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 export const addComment = asyncHandler(async (req, res, next) => {
   const { comment, blogId, authorId } = req.body;
   // Validation
