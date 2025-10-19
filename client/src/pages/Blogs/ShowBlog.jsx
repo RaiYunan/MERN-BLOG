@@ -3,53 +3,90 @@ import Loading from "@/components/Loading";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useFetch } from "@/hooks/useFetch";
 import { decode } from "entities";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { FaRegHeart } from "react-icons/fa6";
 import { FcLike } from "react-icons/fc";
 import { FaRegComment } from "react-icons/fa6";
+import { showToast } from "@/helpers/showToast";
 
 const ShowBlog = () => {
   const { categorySlug, blogSlug } = useParams();
   const user = useSelector((state) => state.user);
-  const [likeBlog, setLikeBlog] = useState(false);
+  const [isLiked, setisLiked] = useState(false);
+  const [refreshData, setRefreshdata] = useState(false);
 
   const url = `${import.meta.env.VITE_URL}/blog/${categorySlug}/${blogSlug}`;
   const {
     data: blogData,
     loading: blogLoading,
     error: blogError,
-  } = useFetch(url, {
-    method: "GET",
-    credentials: "include",
-  });
+  } = useFetch(
+    url,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+    [refreshData]
+  );
+
+  useEffect(()=>{
+    if(blogData?.blog){
+
+    }
+  })
 
   async function handleLike() {
-    setLikeBlog((prev) => !prev);
-
     const blogId = blogData?.blog._id;
     const authorId = user?.user._id || user?.user?.data._id;
     const dataToSend = { blogId, authorId };
 
-    if (!likeBlog) {
+    if (!isLiked) {
       try {
         const url = `${
           import.meta.env.VITE_URL
-        }/blog/${categorySlug}/${blogSlug}/like`;
-        const repsonse = await fetch(url, {
+        }/blog/${categorySlug}/${blogSlug}/add-like`;
+        const response = await fetch(url, {
           method: "POST",
           headers: { "Content-type": "application/json" },
           credentials: "include",
           body: JSON.stringify(dataToSend),
         });
-        const responseData = await repsonse.json();
-        console.log(responseData);
+        const responseData = await response.json();
+        console.log("responseData after like", responseData);
+        if (!response.ok) {
+          showToast("success", responseData.message);
+          return;
+        }
+        setRefreshdata((prev) => !prev);
       } catch (error) {
         showToast("error", error.message);
         console.log("Error while handling likes\n", error.message);
       }
+    } else {
+      const url = `${
+        import.meta.env.VITE_URL
+      }/blog/${categorySlug}/${blogSlug}/remove-like`;
+      try {
+        const response = await fetch(url, {
+          method: "DELETE",
+          headers: { "Content-type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(dataToSend),
+        });
+        const responseData = await response.json();
+        console.log("responseData after unlike", responseData);
+        if (!response.ok) {
+          showToast("success", responseData.message);
+          return;
+        }
+        setRefreshdata((prev) => !prev);
+      } catch (error) {
+        showToast("error", error.message);
+      }
     }
+    setisLiked((prev) => !prev);
   }
   if (blogLoading) return <Loading />;
   return (
@@ -77,7 +114,7 @@ const ShowBlog = () => {
             <div className="flex items-center cursor-pointer">
               <span className="flex items-center gap-1">
                 <button className="p-0 cursor-pointer" onClick={handleLike}>
-                  {likeBlog ? (
+                  {isLiked ? (
                     <FcLike size="16" />
                   ) : (
                     <FaRegHeart
@@ -86,7 +123,9 @@ const ShowBlog = () => {
                     />
                   )}
                 </button>
-                <span className="text-[14px] text-gray-600">1</span>
+                <span className="text-[14px] text-gray-600">
+                  {blogData?.blog?.likeCount}
+                </span>
               </span>
             </div>
 
