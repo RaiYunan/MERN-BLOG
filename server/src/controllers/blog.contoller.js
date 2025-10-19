@@ -1,7 +1,7 @@
 import { Blog } from "../models/blog.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
-import { asyncHandler } from "../utils/AsyncHandler.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { encode } from "entities";
 
@@ -28,13 +28,11 @@ export const getBlogBySlug = asyncHandler(async (req, res, next) => {
   const blog = await Blog.findOne({ slug: blogSlug })
     .populate("author", "email name")
     .populate("category", "name slug");
-    console.log("getBLogbySlug:-\n",blog)
-      // ✅ ADD NULL CHECK HERE - This is the fix!
+
   if (!blog) {
     throw new ApiError(404, "Blog not found");
   }
 
-  // ✅ Also check if category was populated
   if (!blog.category) {
     throw new ApiError(404, "Blog category not found");
   }
@@ -67,7 +65,6 @@ export const showBlog = asyncHandler(async (req, res, next) => {
   const blog = await Blog.findById(blog_id)
     .populate("author", "name email")
     .populate("category", "name slug");
-  console.log(blog);
 
   res
     .status(200)
@@ -106,8 +103,6 @@ export const editBlog = asyncHandler(async (req, res, next) => {
     },
     { new: true }
   );
-  console.log("Updated Blog\n", updatedBlog);
-
   res
     .status(200)
     .json(new ApiResponse(200, updatedBlog, "Blog Updated Successfully."));
@@ -147,8 +142,6 @@ export const deleteBlog = asyncHandler(async (req, res, next) => {
   if (!deletedBlog) {
     throw new ApiError(404, "No blog found with the provided ID.");
   }
-
-  console.log("🗑️ Deleted blog details:\n", deletedBlog);
 
   res.status(200).json(new ApiResponse(200, {}, "Blog deleted successfully."));
 });

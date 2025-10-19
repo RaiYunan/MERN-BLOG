@@ -10,7 +10,7 @@ export const addLike = asyncHandler(async (req, res, next) => {
     throw new ApiError(404,"Blog not found");
   }
   const like=await Like.create({
-    blogId:blogId,
+    blog:blogId,
     author:authorId
   })
 
@@ -18,6 +18,36 @@ export const addLike = asyncHandler(async (req, res, next) => {
     $push:{likes:like._id},
     $inc:{likeCount:1}
   },{new:true})
-  console.log("updatedBlogWithLike\n",updatedBlogWithLike);
   res.status(200).json(new ApiResponse(200,updatedBlogWithLike,"Like added successfully"))
 });
+
+export const removeLike=asyncHandler(async(req,res,next)=>{
+  const {blogId,authorId}=req.body;
+  if(!blogId){
+    throw new ApiError(404,"Blog ID is required..")
+  }
+  if(!authorId){
+    throw new ApiError(404,"Author ID is required..")
+  }
+  const blog=await Blog.findById(blogId);
+  if(!blog){
+    throw new ApiError(404,"Blog not found");
+  }
+
+  const userLike=await Like.findOne({
+    blog:blogId,
+    author:authorId
+  })
+  await Blog.findByIdAndUpdate(blogId, {
+    $pull: { likes: userLike._id },
+    $inc: { likeCount: -1 }
+  });
+
+  // Delete the like document
+  await Like.findByIdAndDelete(userLike._id);
+
+  // ✅ VERIFY: Fetch fresh data from database
+  const freshBlog = await Blog.findById(blogId);
+  res.status(200).json(new ApiResponse(200,freshBlog),"Like removed successfully");
+
+})

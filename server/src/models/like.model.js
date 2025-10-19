@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
 
 const likeSchema=new mongoose.Schema({
-    blogId:{
+    blog:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Blog",
         required: true,
