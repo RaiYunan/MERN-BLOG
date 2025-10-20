@@ -5,7 +5,12 @@ import Loading from "./Loading";
 import { Card, CardContent } from "./ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { Button } from "./ui/button";
-import { RouteBlog, RouteBlogAdd, RouteIndex } from "@/helpers/RouteName";
+import {
+  RouteBlog,
+  RouteBlogAdd,
+  RouteBlogShow,
+  RouteIndex,
+} from "@/helpers/RouteName";
 
 const BlogCardByCategory = () => {
   const { categorySlug } = useParams();
@@ -43,69 +48,74 @@ const BlogCardByCategory = () => {
       {blogData.length > 0 ? (
         blogData.map((blog) => {
           return (
-            <Card className="w-[300px] rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-white border-0 overflow-hidden group py-0">
-              <CardContent className="p-0 cursor-pointer h-full flex flex-col">
-                {/* Image container with gradient overlay */}
-                <div className="overflow-hidden relative">
-                  <img
-                    src={blog?.featuredImage}
-                    alt={blog?.title}
-                    className="h-[180px] w-full object-cover transform transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <Link
+              to={RouteBlogShow(blog?.category.slug, blog?.slug)}
+              key={blog._id}
+            >
+              <Card className="w-[300px] rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-white border-0 overflow-hidden group py-0">
+                <CardContent className="p-0 cursor-pointer h-full flex flex-col">
+                  {/* Image container with gradient overlay */}
+                  <div className="overflow-hidden relative">
+                    <img
+                      src={blog?.featuredImage}
+                      alt={blog?.title}
+                      className="h-[180px] w-full object-cover transform transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                  {/* Category badge positioned on image */}
-                  <div className="absolute top-3 left-3">
-                    <span className="text-xs font-semibold text-white bg-black/70 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                      {blog?.category.name}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-5 flex-1 flex flex-col">
-                  {/* Author info */}
-                  <div className="flex items-center gap-3 mb-4">
-                    <Avatar className="w-9 h-9 border-2 border-white shadow-sm">
-                      <AvatarImage
-                        src={blog?.author.avatar}
-                        alt={blog?.author.name}
-                        className="object-cover"
-                      />
-                      <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white text-xs">
-                        {getInitials(blog?.author.name)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-semibold text-gray-900 truncate">
-                        {name}
-                      </h3>
-                      <p className="text-xs text-gray-500">Author</p>
+                    {/* Category badge positioned on image */}
+                    <div className="absolute top-3 left-3">
+                      <span className="text-xs font-semibold text-white bg-black/70 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                        {blog?.category.name}
+                      </span>
                     </div>
                   </div>
 
-                  {/* Title */}
-                  <h3 className="text-lg font-bold text-gray-900 line-clamp-2 mb-3 group-hover:text-purple-600 transition-colors">
-                    {blog?.title}
-                  </h3>
+                  {/* Content */}
+                  <div className="p-5 flex-1 flex flex-col">
+                    {/* Author info */}
+                    <div className="flex items-center gap-3 mb-4">
+                      <Avatar className="w-9 h-9 border-2 border-white shadow-sm">
+                        <AvatarImage
+                          src={blog?.author.avatar}
+                          alt={blog?.author.name}
+                          className="object-cover"
+                        />
+                        <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white text-xs">
+                          {getInitials(blog?.author.name)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-semibold text-gray-900 truncate">
+                          {name}
+                        </h3>
+                        <p className="text-xs text-gray-500">Author</p>
+                      </div>
+                    </div>
 
-                  {/* Description */}
-                  <div className="flex-1">
-                    <p className="text-gray-600 text-sm line-clamp-3 leading-relaxed">
-                      {decodeHTML(blog?.blogContent).replace(/<[^>]*>/g, "")}
-                    </p>
-                  </div>
+                    {/* Title */}
+                    <h3 className="text-lg font-bold text-gray-900 line-clamp-2 mb-3 group-hover:text-purple-600 transition-colors">
+                      {blog?.title}
+                    </h3>
 
-                  {/* Read more indicator */}
-                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
-                    <span className="text-xs text-purple-600 font-medium group-hover:underline">
-                      Read more
-                    </span>
-                    <div className="w-2 h-2 bg-purple-500 rounded-full group-hover:scale-150 transition-transform duration-300" />
+                    {/* Description */}
+                    <div className="flex-1">
+                      <p className="text-gray-600 text-sm line-clamp-3 leading-relaxed">
+                        {decodeHTML(blog?.blogContent).replace(/<[^>]*>/g, "")}
+                      </p>
+                    </div>
+
+                    {/* Read more indicator */}
+                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
+                      <span className="text-xs text-purple-600 font-medium group-hover:underline">
+                        Read more
+                      </span>
+                      <div className="w-2 h-2 bg-purple-500 rounded-full group-hover:scale-150 transition-transform duration-300" />
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Link>
           );
         })
       ) : (
@@ -140,17 +150,18 @@ const BlogCardByCategory = () => {
           <div className="flex gap-3">
             <Button
               asChild
-              onClick={(()=>navigate(-1))}
+              onClick={() => navigate(-1)}
               className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors bg-white"
             >
               <Link>Go Back</Link>
             </Button>
-          
-            <Button asChild className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+
+            <Button
+              asChild
+              className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
             >
               <Link to={RouteIndex}>Browse All Categories</Link>
             </Button>
-           
           </div>
         </div>
       )}
