@@ -9,11 +9,13 @@ const Index = () => {
     `${import.meta.env.VITE_URL}/blog/all-blogs`
   );
 
+  console.log("BLogData\n",blogData)
+
   if (loading) return <p className="text-center text-gray-500">Loading blogs...</p>;
   if (error) return <p className="text-center text-red-500">Error loading blogs!</p>;
 
   return (
-    <div className="flex flex-wrap gap-5 max-w-fit mx-auto justify-between bg-gray-50 min-h-screen">
+    <div className="flex flex-wrap gap-5 max-w-fit mx-auto bg-gray-50 min-h-screen ">
       {blogData?.length > 0 ? (
         blogData.map((blog) => (
           <Link to={RouteBlogShow(blog?.category?.slug,blog?.slug)} key={blog._id}>
@@ -23,6 +25,8 @@ const Index = () => {
             blogContent={blog.blogContent}
             title={blog.title}
             category={blog.category.name || "General"}
+            avatar={blog.author.avatar}
+            name={blog.author.name}
           />
           </Link>
           

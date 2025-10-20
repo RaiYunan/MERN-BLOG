@@ -7,7 +7,7 @@ import { encode } from "entities";
 
 export const getAllBlogs = asyncHandler(async (req, res, next) => {
   const blogs = await Blog.find()
-    .populate("author", "name email")
+    .populate("author", "name email avatar")
     .populate("category", "name slug")
     .sort({ createdAt: -1 })
     .lean()
