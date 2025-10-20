@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addBlog, deleteBlog, editBlog, getAllBlogs, getBlogBySlug, showBlog } from "../controllers/blog.contoller.js";
+import { addBlog, deleteBlog, editBlog, getAllBlogs, getBlogByCategory, getBlogBySlug, showBlog } from "../controllers/blog.contoller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { addComment, getBlogComments } from "../controllers/comment.controller.js";
 import { addLike, removeLike } from "../controllers/like.controller.js";
@@ -17,5 +17,7 @@ router.route("/:categorySlug/:blogSlug/comments").get(getBlogComments);
 
 router.route("/:categorySlug/:blogSlug/add-like").post(addLike);
 router.route("/:categorySlug/:blogSlug/remove-like").delete(removeLike);
+
+router.route("/:categorySlug").get(getBlogByCategory)
 
 export default router

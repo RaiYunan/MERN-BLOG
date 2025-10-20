@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { encode } from "entities";
+import { Category } from "../models/category.model.js";
 
 export const getAllBlogs = asyncHandler(async (req, res, next) => {
   const blogs = await Blog.find()
@@ -148,3 +149,27 @@ export const deleteBlog = asyncHandler(async (req, res, next) => {
 
   res.status(200).json(new ApiResponse(200, {}, "Blog deleted successfully."));
 });
+
+export const getBlogByCategory=asyncHandler(async(req,res,next)=>{
+  const {categorySlug}=req.params;
+  if(!categorySlug){
+    throw new ApiError(404,"Category Slug is required!!");
+  }
+
+  const category=await Category.findOne({
+    slug:categorySlug
+  })
+  const blogs=await Blog.find({category:category._id}).populate({
+    path:"author",
+    select:"name avatar"
+  }).populate({
+    path:"category",
+    select:"name slug"
+  })
+  if(!blogs){
+    throw new ApiError(404,"No blogs in this category!!");
+
+  }
+
+  res.status(200).json(new ApiResponse(404,blogs,"Blogs retrieved successfully."))
+})
