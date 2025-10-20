@@ -27,3 +27,10 @@ export const RouteBlogShow=(categorySlug,blogSlug)=>{
     }
     return `/blog/${encodeURIComponent(categorySlug)}/${encodeURIComponent(blogSlug)}`
 }
+
+export const RouteBlogShowByCategory=(categorySlug)=>{
+    if(!categorySlug){
+        return `/blog/:categorySlug`
+    }
+    return `/blog/${encodeURIComponent(categorySlug)}`
+}

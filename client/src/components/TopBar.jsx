@@ -25,7 +25,6 @@ import { removeUser } from "@/redux/user/user.slice";
 
 const TopBar = () => {
   const user = useSelector((state) => state.user);
-  console.log("User avatar:", user.user.avatar);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
