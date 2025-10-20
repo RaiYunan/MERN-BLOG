@@ -14,8 +14,9 @@ import { showToast } from "@/helpers/showToast";
 const ShowBlog = () => {
   const { categorySlug, blogSlug } = useParams();
   const user = useSelector((state) => state.user);
+  console.log("USer details",user)
   const [isLiked, setisLiked] = useState(false);
-  const [refreshData, setRefreshdata] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
 
   const url = `${import.meta.env.VITE_URL}/blog/${categorySlug}/${blogSlug}`;
   const {
@@ -28,65 +29,61 @@ const ShowBlog = () => {
       method: "GET",
       credentials: "include",
     },
-    [refreshData]
   );
 
-  useEffect(()=>{
-    if(blogData?.blog){
-
+  console.log("BLogData",blogData)
+  useEffect(() => {
+    if (blogData?.blog) {
+      setLikeCount(blogData.blog.likeCount);
+      const userId=user?.user?._id || user?.user?.data?._id
+      const hasUserLiked=blogData.blog.likes?.some((like)=>
+      like.author?.toString()===userId)
+      setisLiked(hasUserLiked);
     }
-  })
+
+  }, [blogData,user]);
 
   async function handleLike() {
+    if (!user.isLoggedIn) {
+      showToast(
+        "error",
+        "You must be **logged in** to like this. Please sign in or create an account."
+      );
+      return;
+    }
     const blogId = blogData?.blog._id;
     const authorId = user?.user._id || user?.user?.data._id;
     const dataToSend = { blogId, authorId };
 
-    if (!isLiked) {
-      try {
-        const url = `${
-          import.meta.env.VITE_URL
-        }/blog/${categorySlug}/${blogSlug}/add-like`;
-        const response = await fetch(url, {
-          method: "POST",
-          headers: { "Content-type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(dataToSend),
-        });
-        const responseData = await response.json();
-        console.log("responseData after like", responseData);
-        if (!response.ok) {
-          showToast("success", responseData.message);
-          return;
-        }
-        setRefreshdata((prev) => !prev);
-      } catch (error) {
-        showToast("error", error.message);
-        console.log("Error while handling likes\n", error.message);
-      }
-    } else {
+    setisLiked((prev) => !prev);
+    setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
+    try {
       const url = `${
         import.meta.env.VITE_URL
-      }/blog/${categorySlug}/${blogSlug}/remove-like`;
-      try {
-        const response = await fetch(url, {
-          method: "DELETE",
-          headers: { "Content-type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(dataToSend),
-        });
-        const responseData = await response.json();
-        console.log("responseData after unlike", responseData);
-        if (!response.ok) {
-          showToast("success", responseData.message);
-          return;
-        }
-        setRefreshdata((prev) => !prev);
-      } catch (error) {
-        showToast("error", error.message);
+      }/blog/${categorySlug}/${blogSlug}/${
+        isLiked ? "remove-like" : "add-like"
+      }`;
+      const response = await fetch(url, {
+        method: isLiked ? "DELETE" : "POST",
+        headers: { "Content-type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(dataToSend),
+      });
+
+      const responseData=await response.json();
+      console.log(responseData)
+      showToast("success",responseData.message)
+      if (!response.ok) {
+        setisLiked((prev) => !prev);
+        setLikeCount((prev) => (isLiked ? prev + 1 : prev - 1));
+        showToast("error", responseData.message);
       }
+    } catch (error) {
+      setisLiked((prev) => !prev);
+      setLikeCount((prev) => (isLiked ? prev + 1 : prev - 1));
+      showToast("error", "Something went wrong while liking the post");
+      console.error(error);
     }
-    setisLiked((prev) => !prev);
   }
   if (blogLoading) return <Loading />;
   return (
@@ -123,9 +120,7 @@ const ShowBlog = () => {
                     />
                   )}
                 </button>
-                <span className="text-[14px] text-gray-600">
-                  {blogData?.blog?.likeCount}
-                </span>
+                <span className="text-[14px] text-gray-600">{likeCount}</span>
               </span>
             </div>
 

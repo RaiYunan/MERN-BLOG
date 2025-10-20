@@ -17,7 +17,11 @@ export const addLike = asyncHandler(async (req, res, next) => {
   const updatedBlogWithLike=await Blog.findByIdAndUpdate(blogId,{
     $push:{likes:like._id},
     $inc:{likeCount:1}
-  },{new:true})
+  },{new:true}).populate({
+    path:"likes",
+    select:"author"
+  })
+  console.log(updatedBlogWithLike)
   res.status(200).json(new ApiResponse(200,updatedBlogWithLike,"Like added successfully"))
 });
 
@@ -41,13 +45,15 @@ export const removeLike=asyncHandler(async(req,res,next)=>{
   await Blog.findByIdAndUpdate(blogId, {
     $pull: { likes: userLike._id },
     $inc: { likeCount: -1 }
-  });
+  }).populate({
+    path:"likes",
+    select:"author"
+  })
 
-  // Delete the like document
   await Like.findByIdAndDelete(userLike._id);
 
-  // ✅ VERIFY: Fetch fresh data from database
   const freshBlog = await Blog.findById(blogId);
-  res.status(200).json(new ApiResponse(200,freshBlog),"Like removed successfully");
+  console.log(freshBlog);
+  res.status(200).json(new ApiResponse(200,freshBlog,"Like removed successfully"));
 
 })

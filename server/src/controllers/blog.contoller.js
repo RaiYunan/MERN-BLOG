@@ -25,7 +25,10 @@ export const getAllBlogs = asyncHandler(async (req, res, next) => {
 export const getBlogBySlug = asyncHandler(async (req, res, next) => {
   const { blogSlug } = req.params;
 
-  const blog = await Blog.findOne({ slug: blogSlug })
+  const blog = await Blog.findOne({ slug: blogSlug }).populate({
+      path:"likes",
+      select:"author"
+    })
     .populate("author", "email name")
     .populate("category", "name slug");
 

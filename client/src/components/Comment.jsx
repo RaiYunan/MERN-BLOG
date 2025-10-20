@@ -21,10 +21,12 @@ import { showToast } from "@/helpers/showToast";
 import { useParams } from "react-router-dom";
 import { useFetch } from "@/hooks/useFetch";
 import { GoDotFill } from "react-icons/go";
+import { useSelector } from "react-redux";
 
 const Comment = ({ blogId, authorId }) => {
   const { categorySlug, blogSlug } = useParams();
   const [refreshData, setRefreshData] = useState(false);
+  const user=useSelector((state)=>state.user)
   const url = `${
     import.meta.env.VITE_URL
   }/blog/${categorySlug}/${blogSlug}/comments`;
@@ -40,8 +42,6 @@ const Comment = ({ blogId, authorId }) => {
     },
     [refreshData]
   );
-  console.log("Comments data:-", CommentsData);
-
   const formSchema = z.object({
     comment: z.string().min(1, "Comment must be atleast 1 character"),
   });
@@ -55,6 +55,13 @@ const Comment = ({ blogId, authorId }) => {
   const commentContent = form.watch("comment");
 
   async function onSubmit(values) {
+    if (!user.isLoggedIn) {
+      showToast(
+        "error",
+        "You must be **logged in** to comment on this. Please sign in or create an account."
+      );
+      return;
+    }
     const dataToSend = { ...values, blogId, authorId };
     console.log(dataToSend);
     try {
