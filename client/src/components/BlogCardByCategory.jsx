@@ -1,5 +1,5 @@
 import { useFetch } from "@/hooks/useFetch";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Loading from "./Loading";
 import { Card, CardContent } from "./ui/card";
@@ -79,7 +79,7 @@ const BlogCardByCategory = () => {
                         <AvatarImage
                           src={blog?.author.avatar}
                           alt={blog?.author.name}
-                          className="object-cover"
+                          className="object-cover rounded-full"
                         />
                         <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white text-xs">
                           {getInitials(blog?.author.name)}
@@ -87,7 +87,7 @@ const BlogCardByCategory = () => {
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <h3 className="text-sm font-semibold text-gray-900 truncate">
-                          {name}
+                          {blog?.author.name}
                         </h3>
                         <p className="text-xs text-gray-500">Author</p>
                       </div>
