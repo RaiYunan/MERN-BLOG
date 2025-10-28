@@ -78,3 +78,19 @@ export const getBlogComments = asyncHandler(async (req, res, next) => {
       )
     );
 });
+
+export const getAllComments=asyncHandler(async(req,res,next)=>{
+  const comments=await Comment.find().sort({createdAt:-1}).populate({
+    path:"author",
+    select:"name email avatar"
+  }).populate({
+    path:"blogId",
+    populate:{
+      path:"category",
+      select:"name"
+    },
+    select:"blogContent title"
+  })
+
+  res.status(200).json(new ApiResponse(200,comments,comments?"All comments retireved":"No comments"))
+})

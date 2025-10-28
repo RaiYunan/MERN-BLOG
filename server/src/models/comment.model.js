@@ -16,6 +16,12 @@ const commentSchema = new mongoose.Schema(
       ref: "Blog",
       required: true,
     },
+    status:{
+      type:String,
+      enum:["Pending","Rejected","Approved","Spam"],
+      default:"Approved",
+      index:true
+    }
   },
   { timestamps: true }
 );
