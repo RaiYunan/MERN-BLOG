@@ -22,6 +22,7 @@ import {
   RouteBlogShowByCategory,
   RouteCategoryDetails,
   RouteIndex,
+  RouteShowComments,
 } from "@/helpers/RouteName";
 import Loading from "./Loading";
 import { useFetch } from "@/hooks/useFetch";
@@ -81,7 +82,7 @@ const AppSideBar = () => {
             </SidebarMenuItem>
 
             <SidebarMenuItem>
-              <Link to="">
+              <Link to={RouteShowComments}>
                 <SidebarMenuButton className="cursor-pointer">
                   <FaComments />
                   Comments

@@ -13,6 +13,7 @@ import {
   RouteEditCategory,
   RouteIndex,
   RouteProfile,
+  RouteShowComments,
   RouteSignIn,
   RouteSignUp,
 } from "./helpers/RouteName";
@@ -29,6 +30,7 @@ import EditBlog from "./pages/Blogs/EditBlog";
 import ShowBlog from "./pages/Blogs/ShowBlog";
 import BlogCardByCategory from "./components/BlogCardByCategory";
 import SearchResult from "./pages/SearchResult";
+import CommentsList from "./pages/CommentsList";
 
 const App = () => {
   return (
@@ -48,6 +50,8 @@ const App = () => {
           <Route path={RouteBlogShow()} element={<ShowBlog/>}/>
           <Route path={RouteBlogShowByCategory()} element={<BlogCardByCategory/>}/>
           <Route path={RouteBlogShowBySearch()} element={<SearchResult/>}/>
+          {/*Comments */}
+          <Route path={RouteShowComments} element={<CommentsList/>}/>
         </Route>
         <Route path={RouteSignIn} element={<SignIn />} />
         <Route path={RouteSignUp} element={<SignUp />} />

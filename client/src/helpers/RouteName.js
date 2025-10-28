@@ -42,3 +42,5 @@ export const RouteBlogShowBySearch = (query) => {
   }
   return `/search/?q=${encodeURIComponent(query)}`;
 };
+
+export const RouteShowComments="/blog/comments"
