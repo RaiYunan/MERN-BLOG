@@ -1,7 +1,7 @@
 import { Blog } from "../models/blog.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
+import { asyncHandler } from "../utils/AsyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { encode } from "entities";
 import { Category } from "../models/category.model.js";

@@ -2,7 +2,7 @@ import { Blog } from "../models/blog.model.js";
 import { Comment } from "../models/comment.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
+import { asyncHandler } from "../utils/AsyncHandler.js";
 export const addComment = asyncHandler(async (req, res, next) => {
   const { comment, blogId, authorId } = req.body;
   // Validation
@@ -45,7 +45,15 @@ export const addComment = asyncHandler(async (req, res, next) => {
     .json(new ApiResponse(200, newComment, "Comment added successfully"));
 });
 
-export const deleteComment = asyncHandler(async (req, res, next) => {});
+export const deleteComment = asyncHandler(async (req, res, next) => {
+  const {commentId}=req.params;
+  if(!commentId){
+    throw new ApiError(404,"Comment iD is required!!")
+  }
+  const comment=await Comment.findByIdAndDelete(commentId);
+
+  res.status(200).json(new ApiResponse(200,{},"Comment deleted successfully"))
+});
 
 export const getBlogComments = asyncHandler(async (req, res, next) => {
   const { blogSlug } = req.params;

@@ -1,5 +1,5 @@
 import { Blog } from "../models/blog.model.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
+import { asyncHandler } from "../utils/AsyncHandler.js";
 import {ApiError} from "../utils/ApiError.js"
 import { Like } from "../models/like.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
