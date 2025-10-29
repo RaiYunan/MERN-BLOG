@@ -29,6 +29,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { showToast } from "@/helpers/showToast";
 
 
 const CommentsList = () => {
@@ -44,7 +45,7 @@ const CommentsList = () => {
   } = useFetch(url, {
     method: "GET",
     credentials: "include",
-  });
+  },[refreshData]);
 
     const ConfirmDialog = ({ open, onClose, onConfirm, title, description }) => {
     return (
@@ -91,7 +92,28 @@ const CommentsList = () => {
     if (!commentToDelete) {
       return;
     }
-    console.log("gula")
+     try {
+          const response = await fetch(
+            `${import.meta.env.VITE_URL}/blog/comments/delete-comment/${commentToDelete}`,
+            {
+              method: "DELETE",
+              credentials: "include",
+            }
+          );
+          const responseData = await response.json();
+          console.log("responseData inside HandleDelete\n", responseData);
+    
+          if (!response.ok) {
+            showToast("error", responseData.message);
+            return;
+          }
+          closeDeleteDialog();
+          showToast("success", responseData.message || "Comment deleted successfully");
+          setRefreshData((prev) => !prev);
+        } catch (error) {
+          console.error("Delete error:", error);
+          showToast("error", "Failed to delete comment. Please try again.");
+        }
   };
   console.log("Comments Data;-\n", commentsData);
   if (loading) return <Loading />;
@@ -165,7 +187,7 @@ const CommentsList = () => {
         onClose={closeDeleteDialog}
         onConfirm={handleDelete}
         title="Delete this comment?"
-        description="This action cannot be undone. The blog will be permanently deleted."
+        description="This action cannot be undone. The comment will be permanently deleted."
       />
     </div>
   );
