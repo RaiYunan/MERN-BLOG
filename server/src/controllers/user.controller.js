@@ -92,3 +92,9 @@ export const getAllUsers=asyncHandler(async(req,res,next)=>{
 
   res.status(200).json(new ApiResponse(200,users,"Users retrieved successfully."));
 })
+
+export const deleteUser=asyncHandler(async(req,res,next)=>{
+  const {userId}=req.params;
+  const deletedUser=await User.findByIdAndDelete(userId);
+  res.status(200).json(new ApiResponse(200,{},"User Deleted Successfully!!"));
+})
