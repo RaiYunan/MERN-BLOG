@@ -23,6 +23,7 @@ import {
   RouteCategoryDetails,
   RouteIndex,
   RouteShowComments,
+  RouteShowUsers,
 } from "@/helpers/RouteName";
 import Loading from "./Loading";
 import { useFetch } from "@/hooks/useFetch";
@@ -91,7 +92,7 @@ const AppSideBar = () => {
             </SidebarMenuItem>
 
             <SidebarMenuItem>
-              <Link to="">
+              <Link to={RouteShowUsers}>
                 <SidebarMenuButton className="cursor-pointer">
                   <FaUsers />
                   Users
