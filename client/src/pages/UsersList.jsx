@@ -30,9 +30,11 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { showToast } from "@/helpers/showToast";
-
+import userImage from "../assets/images/download.png";
 const UsersList = () => {
   const [refreshData, setRefreshData] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
   const url = `${import.meta.env.VITE_URL}/users/get-all-users`;
   const {
@@ -42,9 +44,44 @@ const UsersList = () => {
   } = useFetch(url, {
     method: "GET",
     credentials: "include",
-  });
+  },[refreshData]);
 
-  console.log("UsersData:\n", usersData);
+  const openDeleteDialog = (userId) => {
+    setOpen(true);
+    setUserToDelete(userId);
+  };
+
+  const closeDeleteDialog = () => {
+    setOpen(false);
+    setUserToDelete(null);
+  };
+  const handleDelete = async () => {
+    if (!userToDelete) {
+      return;
+    }
+    try {
+        const url=`${import.meta.env.VITE_URL}/users/delete-user/${userToDelete}`
+        const response=await fetch(url,{
+            method:"DELETE",
+            credentials:"include"
+        });
+        const resposneData=await response.json();
+        if(!response.ok){
+            showToast("error",resposneData.message);
+            return;
+        }
+
+        showToast("success",resposneData.message);
+        setRefreshData((prev)=>!prev)
+        setUserToDelete(null);
+        setOpen(false);
+    } catch (error) {
+      console.error("Delete error:", error);
+      showToast("error", "Failed to delete user. Please try again.");
+    }
+  };
+
+  console.log(usersData)
   if (loading) return <Loading />;
   if (error) return <div>Error loading users</div>;
 
@@ -104,7 +141,7 @@ const UsersList = () => {
                       <TableCell className="w-[220px]">{user.email}</TableCell>
                       <TableCell className="w-[80px]">
                         <img
-                          src={user.avatar}
+                          src={user.avatar || userImage}
                           alt={user.name}
                           width="40"
                           height="40"
@@ -123,6 +160,7 @@ const UsersList = () => {
                           className="cursor-pointer"
                           variant="destructive"
                           size="sm"
+                          onClick={() => openDeleteDialog(user._id)}
                         >
                           <MdDelete />
                         </Button>
@@ -158,7 +196,6 @@ const UsersList = () => {
                           they register.
                         </p>
                       </div>
-                     
                     </div>
                   </TableCell>
                 </TableRow>
@@ -168,13 +205,13 @@ const UsersList = () => {
         </CardContent>
       </Card>
 
-      {/* <ConfirmDialog
+      <ConfirmDialog
         open={open}
         onClose={closeDeleteDialog}
         onConfirm={handleDelete}
         title="Delete this comment?"
         description="This action cannot be undone. The comment will be permanently deleted."
-      /> */}
+      />
     </div>
   );
 };
