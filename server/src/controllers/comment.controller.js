@@ -46,20 +46,22 @@ export const addComment = asyncHandler(async (req, res, next) => {
 });
 
 export const deleteComment = asyncHandler(async (req, res, next) => {
-  const {commentId}=req.params;
-  if(!commentId){
-    throw new ApiError(404,"Comment iD is required!!")
+  const { commentId } = req.params;
+  if (!commentId) {
+    throw new ApiError(404, "Comment iD is required!!");
   }
-  const comment=await Comment.findByIdAndDelete(commentId);
+  const comment = await Comment.findByIdAndDelete(commentId);
 
-  res.status(200).json(new ApiResponse(200,{},"Comment deleted successfully"))
+  res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Comment deleted successfully"));
 });
 
 export const getBlogComments = asyncHandler(async (req, res, next) => {
   const { blogSlug } = req.params;
   console.log("Looking for blog with slug:", blogSlug); // Add logging
 
-    const blog = await Blog.findOne({ slug: blogSlug })
+  const blog = await Blog.findOne({ slug: blogSlug })
     .populate({
       path: "comments", // ✅ Changed from "comment" to "comments"
       populate: {
@@ -72,7 +74,7 @@ export const getBlogComments = asyncHandler(async (req, res, next) => {
     })
     .select("comments commentCount")
     .lean();
-     // ✅ Add null check
+  // ✅ Add null check
   if (!blog) {
     throw new ApiError(404, "Blog not found");
   }
@@ -87,18 +89,62 @@ export const getBlogComments = asyncHandler(async (req, res, next) => {
     );
 });
 
-export const getAllComments=asyncHandler(async(req,res,next)=>{
-  const comments=await Comment.find().sort({createdAt:-1}).populate({
-    path:"author",
-    select:"name email avatar"
-  }).populate({
-    path:"blogId",
-    populate:{
-      path:"category",
-      select:"name"
-    },
-    select:"blogContent title"
-  })
+export const getAllComments = asyncHandler(async (req, res, next) => {
+  const comments = await Comment.find()
+    .sort({ createdAt: -1 })
+    .populate({
+      path: "author",
+      select: "name email avatar",
+    })
+    .populate({
+      path: "blogId",
+      populate: {
+        path: "category",
+        select: "name",
+      },
+      select: "blogContent title",
+    });
 
-  res.status(200).json(new ApiResponse(200,comments,comments?"All comments retireved":"No comments"))
-})
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        comments,
+        comments ? "All comments retireved" : "No comments"
+      )
+    );
+});
+
+export const getMyComments = asyncHandler(async (req, res, next) => {
+  const userId = req.user._id;
+
+  if (!userId) {
+    throw new ApiError(404, "User Id is required");
+  }
+
+  const myComments = await Comment.find({
+    author: userId,
+  })
+    .sort({ createdAt: -1 })
+    .populate({
+      path: "author",
+      select: "name email avatar",
+    })
+    .populate({
+      path: "blogId",
+      populate: {
+        path: "category",
+        select: "name",
+      },
+      select: "blogContent title",
+    })
+    .lean()
+    .exec();
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, myComments, "My comments retrieved successfully")
+    );
+});

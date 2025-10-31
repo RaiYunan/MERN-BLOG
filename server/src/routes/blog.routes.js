@@ -1,8 +1,9 @@
 import { Router } from "express";
 import { addBlog, deleteBlog, editBlog, getAllBlogs, getBlogByCategory, getBlogBySlug, searchBlogs, showBlog } from "../controllers/blog.contoller.js";
 import { upload } from "../middlewares/multer.middleware.js";
-import { addComment, deleteComment, getAllComments, getBlogComments } from "../controllers/comment.controller.js";
+import { addComment, deleteComment, getAllComments, getBlogComments, getMyComments } from "../controllers/comment.controller.js";
 import { addLike, removeLike } from "../controllers/like.controller.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router=Router()
 
@@ -13,7 +14,8 @@ router.route("/delete-blog/:blog_id").delete(deleteBlog);
 router.route("/all-blogs").get(getAllBlogs);
 router.route("/show-blog/:blog_id").get(showBlog);
 
-router.route("/comments").get(getAllComments)
+router.route("/comments").get(verifyJWT,getAllComments)
+router.route("/my-comments").get(verifyJWT,getMyComments);
 router.route("/comments/delete-comment/:commentId").delete(deleteComment)
 router.route("/search").get(searchBlogs);
 
