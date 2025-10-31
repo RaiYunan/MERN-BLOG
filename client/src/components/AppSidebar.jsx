@@ -27,9 +27,14 @@ import {
 } from "@/helpers/RouteName";
 import Loading from "./Loading";
 import { useFetch } from "@/hooks/useFetch";
+import { useSelector } from "react-redux";
 
 const AppSideBar = () => {
   const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
+  const isUser = user && user.isLoggedIn;
+  const isAdmin = user && user.isLoggedIn && user.user.role === "admin";
+
   const url = `${import.meta.env.VITE_URL}/category/all-category`;
   const {
     data: categoryData,
@@ -40,9 +45,9 @@ const AppSideBar = () => {
     credentials: "include",
   });
 
-  const handleCategoryClick = (categoryId,categorySlug) => {
+  const handleCategoryClick = (categoryId, categorySlug) => {
     console.log(categoryId);
-    navigate(RouteBlogShowByCategory(categorySlug))
+    navigate(RouteBlogShowByCategory(categorySlug));
   };
   if (!categoryData && categoryData?.length == 0) return <Loading />;
   return (
@@ -64,41 +69,50 @@ const AppSideBar = () => {
               </Link>
             </SidebarMenuItem>
 
-            <SidebarMenuItem>
-              <Link to={RouteCategoryDetails}>
-                <SidebarMenuButton className="cursor-pointer">
-                  <TbCategoryFilled />
-                  Categories
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
+            {isAdmin && (
+              <>
+                <SidebarMenuItem>
+                  <Link to={RouteCategoryDetails}>
+                    <SidebarMenuButton className="cursor-pointer">
+                      <TbCategoryFilled />
+                      Categories
+                    </SidebarMenuButton>
+                  </Link>
+                </SidebarMenuItem>
+              </>
+            )}
+            {isUser && (
+              <>
+                <SidebarMenuItem>
+                  <Link to={RouteBlog}>
+                    <SidebarMenuButton className="cursor-pointer">
+                      <FaBlogger />
+                      Blogs
+                    </SidebarMenuButton>
+                  </Link>
+                </SidebarMenuItem>
 
-            <SidebarMenuItem>
-              <Link to={RouteBlog}>
-                <SidebarMenuButton className="cursor-pointer">
-                  <FaBlogger />
-                  Blogs
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <Link to={RouteShowComments}>
+                    <SidebarMenuButton className="cursor-pointer">
+                      <FaComments />
+                      Comments
+                    </SidebarMenuButton>
+                  </Link>
+                </SidebarMenuItem>
+              </>
+            )}
 
-            <SidebarMenuItem>
-              <Link to={RouteShowComments}>
-                <SidebarMenuButton className="cursor-pointer">
-                  <FaComments />
-                  Comments
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-
-            <SidebarMenuItem>
-              <Link to={RouteShowUsers}>
-                <SidebarMenuButton className="cursor-pointer">
-                  <FaUsers />
-                  Users
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
+            {isAdmin && (
+              <SidebarMenuItem>
+                <Link to={RouteShowUsers}>
+                  <SidebarMenuButton className="cursor-pointer">
+                    <FaUsers />
+                    Users
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+            )}
           </SidebarMenu>
         </SidebarGroup>
         <SidebarGroup>
@@ -109,7 +123,9 @@ const AppSideBar = () => {
               return (
                 <div
                   key={category._id}
-                  onClick={() => handleCategoryClick(category._id,category.slug)}
+                  onClick={() =>
+                    handleCategoryClick(category._id, category.slug)
+                  }
                 >
                   <SidebarMenu>
                     <SidebarMenuItem>
