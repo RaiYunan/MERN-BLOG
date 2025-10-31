@@ -33,6 +33,8 @@ import BlogCardByCategory from "./components/BlogCardByCategory";
 import SearchResult from "./pages/SearchResult";
 import CommentsList from "./pages/CommentsList";
 import UsersList from "./pages/UsersList";
+import AuthRouteProtection from "./components/AuthRouteProtection";
+import AdminManagement from "./components/AdminManagement";
 
 const App = () => {
   return (
@@ -40,22 +42,31 @@ const App = () => {
       <Routes>
         <Route path={RouteIndex} element={<Layout />}>
           <Route index element={<Index />} />
-          <Route path={RouteProfile} element={<Profile />} />
-          {/* blog catgeory */}
-          <Route path={RouteAddCategory} element={<AddCategory />} />
-          <Route path={RouteCategoryDetails} element={<CategoryDetails />} />
-          <Route path={RouteEditCategory()} element={<EditCategory />} />
-          {/* blog */}
-          <Route path={RouteBlog} element={<BlogDetails />} />
-          <Route path={RouteBlogAdd} element={<AddBlog/>}/>
-          <Route path={RouteBlogEdit()} element={<EditBlog/>}/>
-          <Route path={RouteBlogShow()} element={<ShowBlog/>}/>
-          <Route path={RouteBlogShowByCategory()} element={<BlogCardByCategory/>}/>
-          <Route path={RouteBlogShowBySearch()} element={<SearchResult/>}/>
-          {/*Comments */}
-          <Route path={RouteShowComments} element={<CommentsList/>}/>
-          {/*All Users */}
-           <Route path={RouteShowUsers} element={<UsersList/>}/>  
+
+          <Route path={RouteBlogShow()} element={<ShowBlog />} />
+          <Route
+            path={RouteBlogShowByCategory()}
+            element={<BlogCardByCategory />}
+          />
+          <Route path={RouteBlogShowBySearch()} element={<SearchResult />} />
+
+          <Route element={<AuthRouteProtection />}>
+            <Route path={RouteProfile} element={<Profile />} />
+            <Route path={RouteBlog} element={<BlogDetails />} />
+            <Route path={RouteBlogAdd} element={<AddBlog />} />
+            <Route path={RouteBlogEdit()} element={<EditBlog />} />
+            {/*Comments */}
+            <Route path={RouteShowComments} element={<CommentsList />} />
+          </Route>
+
+          <Route element={<AdminManagement />}>
+            {/* blog catgeory */}
+            <Route path={RouteAddCategory} element={<AddCategory />} />
+            <Route path={RouteCategoryDetails} element={<CategoryDetails />} />
+            <Route path={RouteEditCategory()} element={<EditCategory />} />
+            {/*All Users */}
+            <Route path={RouteShowUsers} element={<UsersList />} />
+          </Route>
         </Route>
         <Route path={RouteSignIn} element={<SignIn />} />
         <Route path={RouteSignUp} element={<SignUp />} />

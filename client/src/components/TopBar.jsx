@@ -5,7 +5,12 @@ import { Button } from "./ui/button";
 import { FaSignInAlt } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import SearchBox from "./SearchBox";
-import { RouteIndex, RouteProfile, RouteSignIn } from "@/helpers/RouteName";
+import {
+  RouteBlogAdd,
+  RouteIndex,
+  RouteProfile,
+  RouteSignIn,
+} from "@/helpers/RouteName";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -74,7 +79,9 @@ const TopBar = () => {
               <DropdownMenuTrigger>
                 <Avatar className="cursor-pointer">
                   <AvatarImage
-                    src={user.user?.avatar || user.user?.data?.avatar || userImage}
+                    src={
+                      user.user?.avatar || user.user?.data?.avatar || userImage
+                    }
                     alt={user.user?.name || "User"}
                     crossOrigin="anonymous"
                     onError={(e) =>
@@ -92,8 +99,12 @@ const TopBar = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuLabel>
-                  <p className="text-base">{user.user?.name || user.user?.data?.name}</p>
-                  <p className="text-xs">{user.user?.email || user.user?.data?.email}</p>
+                  <p className="text-base">
+                    {user.user?.name || user.user?.data?.name}
+                  </p>
+                  <p className="text-xs">
+                    {user.user?.email || user.user?.data?.email}
+                  </p>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild className="cursor-pointer">
@@ -103,7 +114,7 @@ const TopBar = () => {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer">
-                  <Link to="">
+                  <Link to={RouteBlogAdd}>
                     <FaPlus />
                     Create Blog
                   </Link>
