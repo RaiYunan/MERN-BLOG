@@ -35,13 +35,20 @@ import { FaEye } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { showToast } from "@/helpers/showToast";
+import { TbLogs } from "react-icons/tb";
+import { useSelector } from "react-redux";
 
 const BlogDetails = () => {
   const [refreshData, setRefreshData] = useState(false);
   const [blogToDelete, setBlogToDelete] = useState(null);
   const [open, setOpen] = useState(false);
 
-  const blog_Url = `${import.meta.env.VITE_URL}/blog/all-blogs`;
+  const user=useSelector(state=>state.user);
+  const isUser=(user && user.isLoggedIn )?true: false;
+  const isAdmin=(user && user.isLoggedIn && user.user.role==="admin" )?true: false;
+
+  const baseUrl=`${import.meta.env.VITE_URL}/blog`;
+  const blog_Url = `${baseUrl}/${isAdmin?"all-blogs":"my-blogs"}`;
   const {
     data: blogData,
     loading: blogLoading,
@@ -54,6 +61,7 @@ const BlogDetails = () => {
     },
     [refreshData]
   );
+  console.log(blogData);
 
   const ConfirmDialog = ({ open, onClose, onConfirm, title, description }) => {
     return (
@@ -133,6 +141,9 @@ const BlogDetails = () => {
             <Button asChild className="cursor-pointer">
               <Link to={RouteBlogAdd}>Add Blog</Link>
             </Button>
+          </div>
+          <div className="flex items-center gap-2">
+           {isAdmin?<p>All Blogs</p>:<p>My Blogs</p>}
           </div>
         </CardHeader>
         <div className="overflow-x-auto">
