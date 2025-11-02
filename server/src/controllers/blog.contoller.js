@@ -180,10 +180,11 @@ export const getBlogByCategory = asyncHandler(async (req, res, next) => {
 
 export const searchBlogs = asyncHandler(async (req, res, next) => {
   const { q } = req.query;
-  if(!q || !q.trim()){
-    throw new ApiError(400,"Search query is required.");
+  if (!q || !q.trim()) {
+    throw new ApiError(400, "Search query is required.");
   }
-  const blog = await Blog.find({ title: { $regex: q, $options: "i" } }).populate({
+  const blog = await Blog.find({ title: { $regex: q, $options: "i" } })
+    .populate({
       path: "author",
       select: "name avatar",
     })
@@ -193,5 +194,29 @@ export const searchBlogs = asyncHandler(async (req, res, next) => {
     });
 
   console.log(`Blog searched by "${q}": Found ${blog.length} results`);
-  res.status(200).json(new ApiResponse(200, blog, `Found ${blog.length} blog(s)`));
+  res
+    .status(200)
+    .json(new ApiResponse(200, blog, `Found ${blog.length} blog(s)`));
+});
+
+export const getMyBlogs = asyncHandler(async (req, res, next) => {
+  const userId = req.user._id;
+  if (!userId) {
+    throw new ApiError(404, "User Id is required!");
+  }
+
+  const myBlogs = await Blog.find({ author: userId })
+    .populate({
+      path: "author",
+      select: "name email",
+    })
+    .populate({
+      path: "category",
+      select: "name slug",
+    })
+    .sort({ createdAt: -1 })
+    .lean()
+    .exec();
+
+  res.status(200).json(new ApiResponse(200, myBlogs, "My Blogs are retrieved"));
 });
