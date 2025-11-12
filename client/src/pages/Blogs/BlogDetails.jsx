@@ -35,7 +35,6 @@ import { FaEye } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { showToast } from "@/helpers/showToast";
-import { TbLogs } from "react-icons/tb";
 import { useSelector } from "react-redux";
 
 const BlogDetails = () => {
