@@ -27,7 +27,7 @@ const BlogCard = ({
   };
 
   return (
-    <Card className="w-[300px] rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-white border-0 overflow-hidden group py-0">
+    <Card className="md:w-[300px] w-[340px] rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-white border-0 overflow-hidden group py-0">
       <CardContent className="p-0 cursor-pointer h-full flex flex-col">
         {/* Image container with gradient overlay */}
         <div className="overflow-hidden relative">

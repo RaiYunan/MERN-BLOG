@@ -1,35 +1,35 @@
-import AppSideBar from '@/components/AppSideBar'
-import Footer from '@/components/Footer'
-import TopBar from '@/components/TopBar'
-import { SidebarProvider } from '@/components/ui/sidebar'
-import React from 'react'
-import { Outlet } from 'react-router-dom'
+import AppSideBar from "@/components/AppSideBar";
+import Footer from "@/components/Footer";
+import TopBar from "@/components/TopBar";
+import React, { useState } from "react";
+import { Outlet } from "react-router-dom";
 
 const Layout = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <AppSideBar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
 
-    <SidebarProvider>
-        <TopBar/>
-        <AppSideBar/>
-        <main className='w-full'>
-             <div className='w-full min-h-[calc(100vh-60px)] py-26 px-8'>
-              <Outlet/>
-             </div>
-             <Footer className="fixed bottom-0 w-full"/>
+      {/* Main Area */}
+      <div className="flex-1 flex flex-col min-w-0 md:ml-64 transition-all duration-300 ease-in-out">
+        {/* Topbar */}
+        <TopBar onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
+
+        {/* Content */}
+        <main className="flex-1 px-4 md:px-8 py-6 mt-16 overflow-auto">
+          <Outlet />
         </main>
-    </SidebarProvider>
 
-//     <SidebarProvider>
-//   <AppSideBar>        // ← Sidebar wraps everything
-//     <TopBar/>         // ← TopBar inside sidebar system
-//     <main>
-//       <Outlet/>
-//       <Footer/>
-//     </main>
-//   </AppSideBar>
-// </SidebarProvider>
-  
-  )
-}
+        {/* Footer */}
+        <Footer className="w-full" />
+      </div>
+    </div>
+  );
+};
 
-export default Layout
+export default Layout;

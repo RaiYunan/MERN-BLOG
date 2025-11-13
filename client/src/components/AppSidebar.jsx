@@ -1,21 +1,9 @@
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/images/logo-white.png";
 import { IoHome } from "react-icons/io5";
 import { TbCategoryFilled } from "react-icons/tb";
 import { FaBlogger } from "react-icons/fa6";
-import { FaComments } from "react-icons/fa";
-import { FaUsers } from "react-icons/fa";
+import { FaComments, FaUsers } from "react-icons/fa";
 import { GoDotFill } from "react-icons/go";
 import {
   RouteBlog,
@@ -29,132 +17,149 @@ import Loading from "./Loading";
 import { useFetch } from "@/hooks/useFetch";
 import { useSelector } from "react-redux";
 
-const AppSideBar = () => {
+const AppSideBar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   const isUser = user && user.isLoggedIn;
   const isAdmin = user && user.isLoggedIn && user.user.role === "admin";
 
   const url = `${import.meta.env.VITE_URL}/category/all-category`;
-  const {
-    data: categoryData,
-    loading,
-    error,
-  } = useFetch(url, {
+  const { data: categoryData, loading } = useFetch(url, {
     method: "GET",
     credentials: "include",
   });
 
   const handleCategoryClick = (categoryId, categorySlug) => {
-    console.log(categoryId);
     navigate(RouteBlogShowByCategory(categorySlug));
+    onClose?.();
   };
-  if (!categoryData && categoryData?.length == 0) return <Loading />;
+
+  const handleLinkClick = () => {
+    onClose?.();
+  };
+
+  if (loading) return <Loading />;
+
   return (
-    <Sidebar className="bg-white border-r border-gray-200 min-h-screen">
-      {/* Header */}
-      <SidebarHeader className="bg-white px-4 py-3 border-b border-gray-100 flex items-center justify-center">
-        <div className="cursor-pointer">
-          <img src={logo} alt="Blog Logo" width={130} className="mx-auto" />
+    <>
+      {/* Overlay for mobile */}
+      <div
+        className={`fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity duration-300 ${
+          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={onClose}
+      />
+
+      {/* Sidebar */}
+      <aside
+        className={`fixed top-0 left-0 z-50 w-64 h-screen bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col
+        ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
+      >
+        {/* Header - Fixed at top */}
+        <div className="flex-shrink-0 px-4 py-3 border-b border-gray-100 flex items-center justify-between ">
+          <Link to={RouteIndex}>
+          <img src={logo} alt="Blog Logo" width={140} className="cursor-pointer" /></Link>
+          <button
+            onClick={onClose}
+            className="md:hidden text-gray-600 hover:text-gray-900 p-1"
+          >
+            ✕
+          </button>
         </div>
-      </SidebarHeader>
 
-      {/* Content */}
-      <SidebarContent className="bg-white overflow-y-auto">
-        {/* Main Menu */}
-        <SidebarGroup>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <Link to={RouteIndex}>
-                <SidebarMenuButton className="cursor-pointer flex items-center gap-2 hover:bg-gray-100 transition">
-                  <IoHome className="text-gray-700" />
-                  <span className="text-gray-800 text-sm md:text-base">
-                    Home
-                  </span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-
-            {isAdmin && (
-              <SidebarMenuItem>
-                <Link to={RouteCategoryDetails}>
-                  <SidebarMenuButton className="cursor-pointer flex items-center gap-2 hover:bg-gray-100 transition">
-                    <TbCategoryFilled className="text-gray-700" />
-                    <span className="text-gray-800 text-sm md:text-base">
-                      Categories
-                    </span>
-                  </SidebarMenuButton>
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+          <div className="py-4">
+            {/* Navigation Menu */}
+            <div className="mb-4">
+              <div className="space-y-1">
+                <Link
+                  to={RouteIndex}
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  <IoHome className="text-md" />
+                  <span>Home</span>
                 </Link>
-              </SidebarMenuItem>
-            )}
 
-            {isUser && (
-              <>
-                <SidebarMenuItem>
-                  <Link to={RouteBlog}>
-                    <SidebarMenuButton className="cursor-pointer flex items-center gap-2 hover:bg-gray-100 transition">
-                      <FaBlogger className="text-gray-700" />
-                      <span className="text-gray-800 text-sm md:text-base">
-                        Blogs
-                      </span>
-                    </SidebarMenuButton>
+                {isAdmin && (
+                  <Link
+                    to={RouteCategoryDetails}
+                    onClick={handleLinkClick}
+                    className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                  >
+                    <TbCategoryFilled className="text-md" />
+                    <span>Categories</span>
                   </Link>
-                </SidebarMenuItem>
+                )}
 
-                <SidebarMenuItem>
-                  <Link to={RouteShowComments}>
-                    <SidebarMenuButton className="cursor-pointer flex items-center gap-2 hover:bg-gray-100 transition">
-                      <FaComments className="text-gray-700" />
-                      <span className="text-gray-800 text-sm md:text-base">
-                        Comments
-                      </span>
-                    </SidebarMenuButton>
+                {isUser && (
+                  <>
+                    <Link
+                      to={RouteBlog}
+                      onClick={handleLinkClick}
+                      className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                      <FaBlogger className="text-md" />
+                      <span>Blogs</span>
+                    </Link>
+
+                    <Link
+                      to={RouteShowComments}
+                      onClick={handleLinkClick}
+                      className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                      <FaComments className="text-md" />
+                      <span>Comments</span>
+                    </Link>
+                  </>
+                )}
+
+                {isAdmin && (
+                  <Link
+                    to={RouteShowUsers}
+                    onClick={handleLinkClick}
+                    className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                  >
+                    <FaUsers className="text-md" />
+                    <span>Users</span>
                   </Link>
-                </SidebarMenuItem>
-              </>
-            )}
-
-            {isAdmin && (
-              <SidebarMenuItem>
-                <Link to={RouteShowUsers}>
-                  <SidebarMenuButton className="cursor-pointer flex items-center gap-2 hover:bg-gray-100 transition">
-                    <FaUsers className="text-gray-700" />
-                    <span className="text-gray-800 text-sm md:text-base">
-                      Users
-                    </span>
-                  </SidebarMenuButton>
-                </Link>
-              </SidebarMenuItem>
-            )}
-          </SidebarMenu>
-        </SidebarGroup>
-
-        {/* Categories */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="font-semibold text-gray-700 text-sm px-4">
-            Categories
-          </SidebarGroupLabel>
-          {categoryData?.length > 0 &&
-            categoryData.map((category) => (
-              <div
-                key={category._id}
-                onClick={() => handleCategoryClick(category._id, category.slug)}
-              >
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton className="cursor-pointer flex items-center gap-2 hover:bg-gray-100 transition">
-                      <GoDotFill className="text-gray-500" />
-                      <span className="text-gray-800 text-sm">
-                        {category.name}
-                      </span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
+                )}
               </div>
-            ))}
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+            </div>
+
+            {/* Categories Section */}
+            <div>
+              <div className="px-4 mb-3">
+                <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">
+                  Categories
+                </h3>
+              </div>
+              <div className="space-y-1">
+                {categoryData?.length > 0 ? (
+                  categoryData.map((category) => (
+                    <button
+                      key={category._id}
+                      onClick={() =>
+                        handleCategoryClick(category._id, category.slug)
+                      }
+                      className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors w-full text-left cursor-pointer"
+                    >
+                      <GoDotFill className="text-gray-500 text-sm" />
+                      <span className="truncate">{category.name}</span>
+                    </button>
+                  ))
+                ) : (
+                  <div className="px-4 py-2 text-sm text-gray-500">
+                    No categories found
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </>
   );
 };
 

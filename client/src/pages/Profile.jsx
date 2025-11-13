@@ -60,7 +60,7 @@ const Profile = () => {
     password: z.string().min(8, "Password must be at least 8 characters long"),
   });
 
-  console.log("User without google login",userData)
+  console.log("User without google login", userData);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -179,24 +179,25 @@ const Profile = () => {
   //         ↓
 
   return (
-    <Card className=" max-w-screen-md mx-auto px-15">
-      <CardContent>
-        <div className="flex justify-center items-center mt-5">
+    <Card className="max-w-screen-md mx-auto px-4 sm:px-6 lg:px-15">
+      <CardContent className="pt-6">
+        {/* Avatar Section */}
+        <div className="flex justify-center items-center mb-6 sm:mb-8">
           <Dropzone
             onDrop={(acceptedFiles) => handleFileSelection(acceptedFiles)}
           >
             {({ getRootProps, getInputProps }) => (
-              <div {...getRootProps()}>
+              <div {...getRootProps()} className="cursor-pointer">
                 <input {...getInputProps()} />
-                <Avatar className="w-28 h-28 relative group">
+                <Avatar className="w-20 h-20 sm:w-28 sm:h-28 relative group">
                   <AvatarImage
                     src={
                       filePreview ? filePreview : userData?.avatar || userImage
                     }
                     className="w-full h-full object-contain rounded-full"
                   />
-                  <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 duration-300 cursor-pointer">
-                    <IoCameraOutline className="text-xl text-white transform transition-transform duration-300 group-hover:scale-110" />
+                  <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 duration-300 rounded-full">
+                    <IoCameraOutline className="text-lg sm:text-xl text-white transform transition-transform duration-300 group-hover:scale-110" />
                   </div>
                 </Avatar>
               </div>
@@ -204,36 +205,84 @@ const Profile = () => {
           </Dropzone>
         </div>
 
+        {/* Form Section */}
         <div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="mb-5">
+              <div className="space-y-4 sm:space-y-5">
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel className="text-sm sm:text-base">
+                        Name
+                      </FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter your Name" {...field} />
+                        <Input
+                          placeholder="Enter your Name"
+                          {...field}
+                          className="text-sm sm:text-base"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              </div>
 
-              <div className="mb-5">
                 <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel className="text-sm sm:text-base">
+                        Email
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter your email address"
                           {...field}
+                          className="text-sm sm:text-base"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="bio"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm sm:text-base">
+                        Bio Description
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Enter your bio"
+                          {...field}
+                          className="text-sm sm:text-base min-h-[100px] sm:min-h-[120px]"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm sm:text-base">
+                        Password
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter your password"
+                          {...field}
+                          className="text-sm sm:text-base"
                         />
                       </FormControl>
                       <FormMessage />
@@ -242,40 +291,11 @@ const Profile = () => {
                 />
               </div>
 
-              <div className="mb-5">
-                <FormField
-                  control={form.control}
-                  name="bio"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Bio Description</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="Enter your bio" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="mb-5">
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter your password" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="mt-5">
-                <Button type="submit" className="w-full">
+              <div className="mt-6 sm:mt-8">
+                <Button
+                  type="submit"
+                  className="w-full text-sm sm:text-base py-2.5 sm:py-3"
+                >
                   Save Changes
                 </Button>
               </div>

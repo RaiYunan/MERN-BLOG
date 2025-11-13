@@ -19,7 +19,7 @@ const Index = () => {
     return <p className="text-center text-red-500">Error loading blogs!</p>;
 
   return (
-    <div className="flex flex-wrap gap-5 max-w-fit mx-auto bg-gray-50 min-h-screen ">
+    <div className="flex flex-wrap gap-5 justify-center bg-gray-50 min-h-screen ">
       {blogData?.length > 0 ? (
         blogData.map((blog) => (
           <Link
