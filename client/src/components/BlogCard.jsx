@@ -40,7 +40,7 @@ const BlogCard = ({
           
           {/* Category badge positioned on image */}
           <div className="absolute top-3 left-3">
-            <span className="text-xs font-semibold text-white bg-black/70 backdrop-blur-sm px-3 py-1.5 rounded-full">
+            <span className="md:text-xs text-[10px] font-semibold text-white bg-black/70 backdrop-blur-sm px-3 py-1.5 rounded-full">
               {category}
             </span>
           </div>
@@ -56,33 +56,33 @@ const BlogCard = ({
                 alt={name}
                 className="object-cover"
               />
-              <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white text-xs">
+              <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white md:text-xs text-[10px]">
                 {getInitials(name)}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-semibold text-gray-900 truncate">
+              <h3 className="md:text-sm text-[10px] font-semibold text-gray-900 truncate">
                 {name}
               </h3>
-              <p className="text-xs text-gray-500">Author</p>
+              <p className="md:text-xs text-[10px] text-gray-500">Author</p>
             </div>
           </div>
 
           {/* Title */}
-          <h3 className="text-lg font-bold text-gray-900 line-clamp-2 mb-3 group-hover:text-purple-600 transition-colors">
+          <h3 className="md:text-lg text-[12px]  font-bold text-gray-900 line-clamp-2 mb-3 group-hover:text-purple-600 transition-colors">
             {title}
           </h3>
 
           {/* Description */}
           <div className="flex-1">
-            <p className="text-gray-600 text-sm line-clamp-3 leading-relaxed">
+            <p className="text-gray-600 md:text-sm text-[10px] line-clamp-3 leading-relaxed">
               {decodeHTML(blogContent).replace(/<[^>]*>/g, '')}
             </p>
           </div>
 
           {/* Read more indicator */}
           <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
-            <span className="text-xs text-purple-600 font-medium group-hover:underline">
+            <span className="md:text-xs text-[10px] text-purple-600 font-medium group-hover:underline">
               Read more
             </span>
             <div className="w-2 h-2 bg-purple-500 rounded-full group-hover:scale-150 transition-transform duration-300" />

@@ -51,52 +51,63 @@ const AppSideBar = () => {
   };
   if (!categoryData && categoryData?.length == 0) return <Loading />;
   return (
-    <Sidebar>
-      <SidebarHeader className="bg-white">
+    <Sidebar className="bg-white border-r border-gray-200 min-h-screen">
+      {/* Header */}
+      <SidebarHeader className="bg-white px-4 py-3 border-b border-gray-100 flex items-center justify-center">
         <div className="cursor-pointer">
-          <img src={logo} width={150} />
+          <img src={logo} alt="Blog Logo" width={130} className="mx-auto" />
         </div>
       </SidebarHeader>
-      <SidebarContent className="bg-white">
-        <SidebarGroup className="">
+
+      {/* Content */}
+      <SidebarContent className="bg-white overflow-y-auto">
+        {/* Main Menu */}
+        <SidebarGroup>
           <SidebarMenu>
             <SidebarMenuItem>
               <Link to={RouteIndex}>
-                <SidebarMenuButton className="cursor-pointer">
-                  <IoHome />
-                  Home
+                <SidebarMenuButton className="cursor-pointer flex items-center gap-2 hover:bg-gray-100 transition">
+                  <IoHome className="text-gray-700" />
+                  <span className="text-gray-800 text-sm md:text-base">
+                    Home
+                  </span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
 
             {isAdmin && (
-              <>
-                <SidebarMenuItem>
-                  <Link to={RouteCategoryDetails}>
-                    <SidebarMenuButton className="cursor-pointer">
-                      <TbCategoryFilled />
+              <SidebarMenuItem>
+                <Link to={RouteCategoryDetails}>
+                  <SidebarMenuButton className="cursor-pointer flex items-center gap-2 hover:bg-gray-100 transition">
+                    <TbCategoryFilled className="text-gray-700" />
+                    <span className="text-gray-800 text-sm md:text-base">
                       Categories
-                    </SidebarMenuButton>
-                  </Link>
-                </SidebarMenuItem>
-              </>
+                    </span>
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
             )}
+
             {isUser && (
               <>
                 <SidebarMenuItem>
                   <Link to={RouteBlog}>
-                    <SidebarMenuButton className="cursor-pointer">
-                      <FaBlogger />
-                      Blogs
+                    <SidebarMenuButton className="cursor-pointer flex items-center gap-2 hover:bg-gray-100 transition">
+                      <FaBlogger className="text-gray-700" />
+                      <span className="text-gray-800 text-sm md:text-base">
+                        Blogs
+                      </span>
                     </SidebarMenuButton>
                   </Link>
                 </SidebarMenuItem>
 
                 <SidebarMenuItem>
                   <Link to={RouteShowComments}>
-                    <SidebarMenuButton className="cursor-pointer">
-                      <FaComments />
-                      Comments
+                    <SidebarMenuButton className="cursor-pointer flex items-center gap-2 hover:bg-gray-100 transition">
+                      <FaComments className="text-gray-700" />
+                      <span className="text-gray-800 text-sm md:text-base">
+                        Comments
+                      </span>
                     </SidebarMenuButton>
                   </Link>
                 </SidebarMenuItem>
@@ -106,40 +117,41 @@ const AppSideBar = () => {
             {isAdmin && (
               <SidebarMenuItem>
                 <Link to={RouteShowUsers}>
-                  <SidebarMenuButton className="cursor-pointer">
-                    <FaUsers />
-                    Users
+                  <SidebarMenuButton className="cursor-pointer flex items-center gap-2 hover:bg-gray-100 transition">
+                    <FaUsers className="text-gray-700" />
+                    <span className="text-gray-800 text-sm md:text-base">
+                      Users
+                    </span>
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>
             )}
           </SidebarMenu>
         </SidebarGroup>
+
+        {/* Categories */}
         <SidebarGroup>
-          <SidebarGroupLabel>Categories</SidebarGroupLabel>
-          {categoryData &&
-            categoryData?.length > 0 &&
-            categoryData.map((category) => {
-              return (
-                <div
-                  key={category._id}
-                  onClick={() =>
-                    handleCategoryClick(category._id, category.slug)
-                  }
-                >
-                  <SidebarMenu>
-                    <SidebarMenuItem>
-                      <Link to="">
-                        <SidebarMenuButton className="cursor-pointer">
-                          <GoDotFill />
-                          {category.name}
-                        </SidebarMenuButton>
-                      </Link>
-                    </SidebarMenuItem>
-                  </SidebarMenu>
-                </div>
-              );
-            })}
+          <SidebarGroupLabel className="font-semibold text-gray-700 text-sm px-4">
+            Categories
+          </SidebarGroupLabel>
+          {categoryData?.length > 0 &&
+            categoryData.map((category) => (
+              <div
+                key={category._id}
+                onClick={() => handleCategoryClick(category._id, category.slug)}
+              >
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton className="cursor-pointer flex items-center gap-2 hover:bg-gray-100 transition">
+                      <GoDotFill className="text-gray-500" />
+                      <span className="text-gray-800 text-sm">
+                        {category.name}
+                      </span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </div>
+            ))}
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>

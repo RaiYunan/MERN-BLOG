@@ -58,79 +58,82 @@ const TopBar = () => {
   }
 
   return (
-    <div className="flex justify-between items-center h-16 fixed w-full z-20 bg-white border-b border-gray-300 border-[2px] ">
-      <Link to={RouteIndex}>
-        <img src={logo} width={160} className="cursor-pointer" />
+    <div className="fixed top-0 left-0 w-full z-20 flex items-center justify-between h-16 bg-white border-b border-gray-200 shadow-sm px-4 md:px-8">
+      {/* Logo */}
+      <Link to={RouteIndex} className="flex-shrink-0">
+        <img
+          src={logo}
+          alt="Blog Logo"
+          className="cursor-pointer h-8 md:h-10 w-auto"
+        />
       </Link>
-      <div className="w-[600px]">
+
+      {/* Search */}
+      <div className="md:w-[500px] w-[120px]">
         <SearchBox />
       </div>
-      <div className="px-4">
+
+      {/* Right section */}
+      <div>
         {!user.isLoggedIn ? (
-          <Button asChild>
-            <Link to={RouteSignIn} className="rounded-md">
-              <FaSignInAlt />
-              Sign In
+          <Button asChild size="sm" className="rounded-md">
+            <Link to={RouteSignIn} className="flex items-center gap-2">
+              <FaSignInAlt className="w-3 h-3 md:w-4 md:h-4" />
+              <span className="text-[11px] md:text-sm">Sign In</span>
             </Link>
           </Button>
         ) : (
-          <div className="cursor-pointer">
-            <DropdownMenu>
-              <DropdownMenuTrigger>
-                <Avatar className="cursor-pointer">
-                  <AvatarImage
-                    src={
-                      user.user?.avatar || user.user?.data?.avatar || userImage
-                    }
-                    alt={user.user?.name || "User"}
-                    crossOrigin="anonymous"
-                    onError={(e) =>
-                      console.error("Avatar load failed:", user.user?.avatar)
-                    }
-                  />
-                  <AvatarFallback>
-                    {user.user?.name
-                      ?.split(" ")
-                      .map((n) => n[0])
-                      .join("")
-                      .toUpperCase() || "U"}
-                  </AvatarFallback>
-                </Avatar>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>
-                  <p className="text-base">
-                    {user.user?.name || user.user?.data?.name}
-                  </p>
-                  <p className="text-xs">
-                    {user.user?.email || user.user?.data?.email}
-                  </p>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild className="cursor-pointer">
-                  <Link to={RouteProfile}>
-                    <FaRegUser />
-                    Profile
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild className="cursor-pointer">
-                  <Link to={RouteBlogAdd}>
-                    <FaPlus />
-                    Create Blog
-                  </Link>
-                </DropdownMenuItem>
-
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={handleLogOut}
-                >
-                  <FiLogOut color="red" />
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Avatar className="cursor-pointer ring-1 ring-gray-200">
+                <AvatarImage
+                  src={
+                    user.user?.avatar || user.user?.data?.avatar || userImage
+                  }
+                  alt={user.user?.name || "User"}
+                  crossOrigin="anonymous"
+                  onError={() =>
+                    console.error("Avatar load failed:", user.user?.avatar)
+                  }
+                />
+                <AvatarFallback>
+                  {user.user?.name
+                    ?.split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .toUpperCase() || "U"}
+                </AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>
+                <p className="text-base font-medium">
+                  {user.user?.name || user.user?.data?.name}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {user.user?.email || user.user?.data?.email}
+                </p>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link to={RouteProfile} className="flex items-center gap-2">
+                  <FaRegUser /> Profile
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to={RouteBlogAdd} className="flex items-center gap-2">
+                  <FaPlus /> Create Blog
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={handleLogOut}
+                className="text-red-500 flex items-center gap-2 cursor-pointer"
+              >
+                <FiLogOut /> Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
       </div>
     </div>
