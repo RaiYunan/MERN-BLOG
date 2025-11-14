@@ -15,8 +15,14 @@ import {
 } from "@/components/ui/form";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { FaExclamationTriangle } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 const ChangePassword = () => {
+  const user = useSelector((state) => state.user);
+  console.log(user);
+  const isGoogleUser =
+    (user && user.isLoggedIn && user.user.authProvider === "google") || false;
+  console.log("Is tge user google logged in?:", isGoogleUser);
   const [showPassword, setShowPassword] = useState({
     current: false,
     new: false,
@@ -29,6 +35,7 @@ const ChangePassword = () => {
       newPassword: z
         .string()
         .min(8, "Password must be at least 8 characters")
+        .regex(/^\S+$/, "Password cannot contain spaces")
         .regex(/[A-Z]/, "Must contain at least one uppercase letter")
         .regex(/[a-z]/, "Must contain at least one lowercase letter")
         .regex(/[0-9]/, "Must contain at least one number"),
@@ -65,7 +72,7 @@ const ChangePassword = () => {
     <div className="max-w-lg mx-auto py-8 px-4">
       <Card className="shadow-lg border border-gray-100">
         {/* Header */}
-        <CardHeader >
+        <CardHeader>
           <CardTitle className="text-2xl font-bold text-gray-900">
             Account Settings
           </CardTitle>
@@ -73,145 +80,167 @@ const ChangePassword = () => {
             Manage your account security
           </p>
         </CardHeader>
-
         <div className="border-t border-gray-100" />
 
-        {/* Change Password */}
-        <CardContent >
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-1">
-              Change Password
-            </h2>
-            <p className="text-gray-600 text-sm">
-              Create a strong new password to secure your account
-            </p>
-          </div>
+        {!isGoogleUser ? (
+          <>
+            {/* Change Password */}
+            <CardContent>
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-1">
+                  Change Password
+                </h2>
+                <p className="text-gray-600 text-sm">
+                  Create a strong new password to secure your account
+                </p>
+              </div>
 
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              {/* Current Password */}
-              <FormField
-                control={form.control}
-                name="currentPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium text-gray-700">
-                      Current Password
-                    </FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          {...field}
-                          type={showPassword.current ? "text" : "password"}
-                          placeholder="Enter your current password"
-                          className="pr-10 transition-colors focus:ring-2 focus:ring-blue-500"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => togglePasswordVisibility("current")}
-                          className="absolute right-3 top-1/2 -translate-y-1/2
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-6"
+                >
+                  {/* Current Password */}
+                  <FormField
+                    control={form.control}
+                    name="currentPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-700">
+                          Current Password
+                        </FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              {...field}
+                              type={showPassword.current ? "text" : "password"}
+                              placeholder="Enter your current password"
+                              className="pr-10 transition-colors focus:ring-2 focus:ring-blue-500"
+                            />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                togglePasswordVisibility("current")
+                              }
+                              className="absolute right-3 top-1/2 -translate-y-1/2
                              text-gray-400 hover:text-gray-600 transition-colors p-1 rounded hover:bg-gray-100"
-                        >
-                          {showPassword.current ? (
-                            <FaEyeSlash className="w-4 h-4" />
-                          ) : (
-                            <FaEye className="w-4 h-4" />
-                          )}
-                        </button>
-                      </div>
-                    </FormControl>
-                    <FormMessage className="text-xs mt-1" />
-                  </FormItem>
-                )}
-              />
+                            >
+                              {showPassword.current ? (
+                                <FaEyeSlash className="w-4 h-4" />
+                              ) : (
+                                <FaEye className="w-4 h-4" />
+                              )}
+                            </button>
+                          </div>
+                        </FormControl>
+                        <FormMessage className="text-xs mt-1" />
+                      </FormItem>
+                    )}
+                  />
 
-              {/* New Password */}
-              <FormField
-                control={form.control}
-                name="newPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium text-gray-700">
-                      New Password
-                    </FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          {...field}
-                          type={showPassword.new ? "text" : "password"}
-                          placeholder="Create a new password"
-                          className="pr-10 transition-colors focus:ring-2 focus:ring-blue-500"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => togglePasswordVisibility("new")}
-                          className="absolute right-3 top-1/2 -translate-y-1/2
+                  {/* New Password */}
+                  <FormField
+                    control={form.control}
+                    name="newPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-700">
+                          New Password
+                        </FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              {...field}
+                              type={showPassword.new ? "text" : "password"}
+                              placeholder="Create a new password"
+                              className="pr-10 transition-colors focus:ring-2 focus:ring-blue-500"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => togglePasswordVisibility("new")}
+                              className="absolute right-3 top-1/2 -translate-y-1/2
                              text-gray-400 hover:text-gray-600 transition-colors p-1 rounded hover:bg-gray-100"
-                        >
-                          {showPassword.new ? (
-                            <FaEyeSlash className="w-4 h-4" />
-                          ) : (
-                            <FaEye className="w-4 h-4" />
-                          )}
-                        </button>
-                      </div>
-                    </FormControl>
-                    <FormMessage className="text-xs mt-1" />
-                  </FormItem>
-                )}
-              />
+                            >
+                              {showPassword.new ? (
+                                <FaEyeSlash className="w-4 h-4" />
+                              ) : (
+                                <FaEye className="w-4 h-4" />
+                              )}
+                            </button>
+                          </div>
+                        </FormControl>
+                        <FormMessage className="text-xs mt-1" />
+                      </FormItem>
+                    )}
+                  />
 
-              {/* Confirm New Password */}
-              <FormField
-                control={form.control}
-                name="confirmNewPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium text-gray-700">
-                      Confirm New Password
-                    </FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          {...field}
-                          type={showPassword.confirm ? "text" : "password"}
-                          placeholder="Confirm your new password"
-                          className="pr-10 transition-colors focus:ring-2 focus:ring-blue-500"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => togglePasswordVisibility("confirm")}
-                          className="absolute right-3 top-1/2 -translate-y-1/2
+                  {/* Confirm New Password */}
+                  <FormField
+                    control={form.control}
+                    name="confirmNewPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-700">
+                          Confirm New Password
+                        </FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              {...field}
+                              type={showPassword.confirm ? "text" : "password"}
+                              placeholder="Confirm your new password"
+                              className="pr-10 transition-colors focus:ring-2 focus:ring-blue-500"
+                            />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                togglePasswordVisibility("confirm")
+                              }
+                              className="absolute right-3 top-1/2 -translate-y-1/2
                              text-gray-400 hover:text-gray-600 transition-colors p-1 rounded hover:bg-gray-100"
-                        >
-                          {showPassword.confirm ? (
-                            <FaEyeSlash className="w-4 h-4" />
-                          ) : (
-                            <FaEye className="w-4 h-4" />
-                          )}
-                        </button>
-                      </div>
-                    </FormControl>
-                    <FormMessage className="text-xs mt-1" />
-                  </FormItem>
-                )}
-              />
+                            >
+                              {showPassword.confirm ? (
+                                <FaEyeSlash className="w-4 h-4" />
+                              ) : (
+                                <FaEye className="w-4 h-4" />
+                              )}
+                            </button>
+                          </div>
+                        </FormControl>
+                        <FormMessage className="text-xs mt-1" />
+                      </FormItem>
+                    )}
+                  />
 
-              <Button
-                type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 py-2.5 font-medium transition-colors"
-              >
-                Change Password
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-
+                  <Button
+                    type="submit"
+                    className="w-full bg-blue-600 hover:bg-blue-700 py-2.5 font-medium transition-colors"
+                  >
+                    Change Password
+                  </Button>
+                </form>
+              </Form>
+            </CardContent>
+          </>
+        ) : (
+          <CardContent>
+            <div className="mb-2">
+              <h2 className="text-lg font-semibold text-gray-900 mb-1">
+                Password Settings
+              </h2>
+              <p className="text-sm text-gray-600">
+                Your account uses{" "}
+                <span className="font-medium">Google Sign-In</span>. Password
+                changes must be managed through your Google Account.
+              </p>
+            </div>
+          </CardContent>
+        )}
         {/* Divider */}
         <div className="border-t border-gray-100 mx-6" />
 
         {/* Delete Account */}
-        <CardContent className="pt-6 pb-8">
+        <CardContent className="pt-3 pb-4">
           <div className="mb-4">
             <h2 className="text-lg font-semibold text-red-600 flex items-center gap-2 mb-1">
               <FaExclamationTriangle className="w-4 h-4" /> Danger Zone
