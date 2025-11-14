@@ -118,7 +118,7 @@ const ShowBlog = () => {
           {/* Like & Comment Section */}
           <div className="flex justify-center sm:justify-start gap-4 mt-2">
             <div className="flex items-center gap-1 cursor-pointer">
-              <button onClick={handleLike}>
+              <button onClick={handleLike} className="cursor-pointer">
                 {isLiked ? (
                   <FcLike size={18} />
                 ) : (

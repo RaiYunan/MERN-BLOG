@@ -46,3 +46,5 @@ export const RouteBlogShowBySearch = (query) => {
 export const RouteShowComments="/blog/comments"
 
 export const RouteShowUsers="/all-users"
+
+export const RouteAccount="/account"

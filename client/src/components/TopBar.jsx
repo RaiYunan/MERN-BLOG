@@ -5,6 +5,7 @@ import { FaSignInAlt } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import SearchBox from "./SearchBox";
 import {
+  RouteAccount,
   RouteBlogAdd,
   RouteIndex,
   RouteProfile,
@@ -27,6 +28,7 @@ import { FiLogOut } from "react-icons/fi";
 import { showToast } from "@/helpers/showToast";
 import { removeUser } from "@/redux/user/user.slice";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { MdAccountCircle } from "react-icons/md";
 
 const TopBar = ({ onMenuClick }) => {
   const user = useSelector((state) => state.user);
@@ -134,7 +136,7 @@ const TopBar = ({ onMenuClick }) => {
               <DropdownMenuItem asChild>
                 <Link
                   to={RouteProfile}
-                  className="flex items-center gap-2 text-sm"
+                  className="flex items-center gap-2 text-base font-medium cursor-pointer"
                 >
                   <FaRegUser className="w-4 h-4" /> Profile
                 </Link>
@@ -142,15 +144,23 @@ const TopBar = ({ onMenuClick }) => {
               <DropdownMenuItem asChild>
                 <Link
                   to={RouteBlogAdd}
-                  className="flex items-center gap-2 text-sm"
+                  className="flex items-center gap-2 text-base font-medium cursor-pointer"
                 >
                   <FaPlus className="w-4 h-4" /> Create Blog
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link
+                  to={RouteAccount}
+                  className="flex items-center gap-2 text-base font-medium cursor-pointer"
+                >
+                  <MdAccountCircle className="text-2xl" /> Account Settings
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={handleLogOut}
-                className="text-red-500 flex items-center gap-2 cursor-pointer text-sm"
+                className="text-red-500 flex items-center gap-2 cursor-pointer font-medium text-sm"
               >
                 <FiLogOut className="w-4 h-4" /> Logout
               </DropdownMenuItem>

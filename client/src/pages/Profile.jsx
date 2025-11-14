@@ -57,7 +57,6 @@ const Profile = () => {
       .string()
       .min(5, "Bio must be at least 5 characters long")
       .max(160, "Bio cannot exceed 160 characters"),
-    password: z.string().min(8, "Password must be at least 8 characters long"),
   });
 
   console.log("User without google login", userData);
@@ -67,7 +66,6 @@ const Profile = () => {
       name: "",
       email: "",
       bio: "",
-      password: "",
     },
   });
 
@@ -77,7 +75,6 @@ const Profile = () => {
         name: userData?.name || "",
         email: userData?.email || "",
         bio: userData?.bio || "",
-        password: "",
       });
     }
   }, [userData]);
@@ -243,6 +240,8 @@ const Profile = () => {
                           placeholder="Enter your email address"
                           {...field}
                           className="text-sm sm:text-base"
+                          readOnly
+                          disabled
                         />
                       </FormControl>
                       <FormMessage />
@@ -270,31 +269,13 @@ const Profile = () => {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm sm:text-base">
-                        Password
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter your password"
-                          {...field}
-                          className="text-sm sm:text-base"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+               
               </div>
 
               <div className="mt-6 sm:mt-8">
                 <Button
                   type="submit"
-                  className="w-full text-sm sm:text-base py-2.5 sm:py-3"
+                  className="w-full text-sm sm:text-base py-2.5 sm:py-3 cursor-pointer"
                 >
                   Save Changes
                 </Button>

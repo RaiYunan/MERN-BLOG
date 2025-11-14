@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./Layout/Layout";
 import {
+  RouteAccount,
   RouteAddCategory,
   RouteBlog,
   RouteBlogAdd,
@@ -35,6 +36,7 @@ import CommentsList from "./pages/CommentsList";
 import UsersList from "./pages/UsersList";
 import AuthRouteProtection from "./components/AuthRouteProtection";
 import AdminManagement from "./components/AdminManagement";
+import AccountSettings from "./pages/AccountSettings";
 
 const App = () => {
   return (
@@ -57,6 +59,7 @@ const App = () => {
             <Route path={RouteBlogEdit()} element={<EditBlog />} />
             {/*Comments */}
             <Route path={RouteShowComments} element={<CommentsList />} />
+            <Route path={RouteAccount} element={<AccountSettings/>}/>
           </Route>
 
           <Route element={<AdminManagement />}>
