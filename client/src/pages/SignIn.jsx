@@ -8,7 +8,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import React from "react";
+import React, { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -20,8 +20,10 @@ import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/user/user.slice.js";
 import GoogleLogin from "@/components/GoogleLogin";
 import { ArrowLeft } from "lucide-react";
+import { FaEye, FaEyeSlash } from "react-icons/fa6";
 
 const SignIn = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const formSchema = z.object({
@@ -66,7 +68,6 @@ const SignIn = () => {
 
   return (
     <div className="flex items-center justify-center h-screen w-screen">
-      
       <Card className="w-[400px] p-5">
         <Button
           variant="ghost"
@@ -115,7 +116,21 @@ const SignIn = () => {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your password" {...field} />
+                      <div className="relative">
+                        <Input
+                          placeholder="Enter your password"
+                          {...field}
+                          type={showPassword ? "text" : "password"}
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-600 hover:text-gray-800 transition-colors"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        </button>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
