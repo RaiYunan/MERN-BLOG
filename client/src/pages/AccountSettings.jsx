@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { FaExclamationTriangle } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Dialog,
   DialogContent,
@@ -25,8 +25,13 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { showToast } from "@/helpers/showToast";
+import { removeUser } from "@/redux/user/user.slice";
+import { useNavigate } from "react-router-dom";
+import { RouteIndex } from "@/helpers/RouteName";
 
 const ChangePassword = () => {
+  const dispatch=useDispatch();
+  const navigate=useNavigate()
   const user = useSelector((state) => state.user);
   console.log(user);
   const isGoogleUser =
@@ -130,6 +135,11 @@ const ChangePassword = () => {
         credentials: "include",
       });
 
+      console.log("Response status:", deleteResponse.status);
+      console.log("Response ok:", deleteResponse.ok);
+
+      const result = await deleteResponse.json();
+      console.log("Response data:", result);
       if (!deleteResponse.ok) {
         showToast("error", "Can't delete account. Something went wrong.");
         return;
