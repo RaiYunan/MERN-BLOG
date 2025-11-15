@@ -4,7 +4,7 @@ const commentSchema = new mongoose.Schema(
     content: {
       type: String,
       required: true,
-      trim:true
+      trim: true,
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,
@@ -16,14 +16,14 @@ const commentSchema = new mongoose.Schema(
       ref: "Blog",
       required: true,
     },
-    status:{
-      type:String,
-      enum:["Pending","Rejected","Approved","Spam"],
-      default:"Approved",
-      index:true
-    }
+    status: {
+      type: String,
+      enum: ["Pending", "Rejected", "Approved", "Spam"],
+      default: "Approved",
+      index: true,
+    },
   },
   { timestamps: true }
 );
 
-export const Comment=mongoose.model("Comment",commentSchema);
+export const Comment = mongoose.model("Comment", commentSchema);

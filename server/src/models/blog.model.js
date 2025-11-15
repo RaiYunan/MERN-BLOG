@@ -32,25 +32,28 @@ const blogSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    comments:[{
-      type:mongoose.Schema.Types.ObjectId,
-      ref:"Comment"
-    }],
-    commentCount:{
-      type:Number,
-      default:0,
-      
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment",
+      },
+    ],
+    commentCount: {
+      type: Number,
+      default: 0,
     },
-    likes:[{
-      type:mongoose.Schema.Types.ObjectId,
-      ref:"Like"
-    }],
-    likeCount:{
-      type:Number,
-      default:0
-    }
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Like",
+      },
+    ],
+    likeCount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
 
-export const Blog=mongoose.model("Blog",blogSchema)
+export const Blog = mongoose.model("Blog", blogSchema);
