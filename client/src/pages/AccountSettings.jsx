@@ -16,18 +16,29 @@ import {
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { showToast } from "@/helpers/showToast";
 
 const ChangePassword = () => {
   const user = useSelector((state) => state.user);
   console.log(user);
   const isGoogleUser =
     (user && user.isLoggedIn && user.user.authProvider === "google") || false;
-  console.log("Is tge user google logged in?:", isGoogleUser);
+
   const [showPassword, setShowPassword] = useState({
     current: false,
     new: false,
     confirm: false,
   });
+  const [open, setOpen] = useState(false);
+  const [accountToDelete, setAccountToDelete] = useState(null);
 
   const formSchema = z
     .object({
@@ -66,6 +77,75 @@ const ChangePassword = () => {
       ...prev,
       [field]: !prev[field],
     }));
+  };
+
+  const ConfirmDialog = ({ open, onClose, onConfirm, title, description }) => {
+    return (
+      <Dialog open={open} onOpenChange={onClose}>
+        <DialogContent className="sm:max-w-[400px] px-10 py-12 flex-col gap-6">
+          <DialogHeader>
+            <DialogTitle>{title}</DialogTitle>
+            <DialogDescription>{description}</DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={onClose}
+              className="cursor-pointer"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={onConfirm}
+              className="cursor-pointer"
+            >
+              Confirm
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  };
+
+  const openDeleteDialog = (userId) => {
+    setAccountToDelete(userId);
+    setOpen(true);
+  };
+
+  const closeDeleteDialog = () => {
+    setOpen(false);
+    setAccountToDelete(null);
+  };
+  const handleDelete = async () => {
+    if (!accountToDelete) return;
+
+    try {
+      const delete_url = `${
+        import.meta.env.VITE_URL
+      }/users/delete-user/${accountToDelete}`;
+      const deleteResponse = await fetch(delete_url, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (!deleteResponse.ok) {
+        showToast("error", "Can't delete account. Something went wrong.");
+        return;
+      }
+
+      showToast("success", "Account deleted successfully");
+
+      // Clear local state and redirect
+      dispatch(removeUser());
+      setAccountToDelete(null);
+      setOpen(false);
+      navigate(RouteIndex);
+    } catch (error) {
+      console.error("Delete account error:", error);
+      showToast("error", "Something went wrong during account deletion");
+    }
   };
 
   return (
@@ -266,11 +346,21 @@ const ChangePassword = () => {
           <Button
             variant="destructive"
             className="w-full bg-red-600 hover:bg-red-700 font-medium"
+            onClick={() =>
+              openDeleteDialog(user.user._id || user.user.data._id)
+            }
           >
             Delete Account
           </Button>
         </CardContent>
       </Card>
+      <ConfirmDialog
+        open={open}
+        onClose={closeDeleteDialog}
+        onConfirm={handleDelete}
+        title="Delete this account?"
+        description="This action cannot be undone. The account will be permanently deleted."
+      />
     </div>
   );
 };

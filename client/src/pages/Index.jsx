@@ -3,7 +3,7 @@ import BlogCard from "@/components/BlogCard";
 import { useFetch } from "@/hooks/useFetch";
 import { Link } from "react-router-dom";
 import { RouteBlogShow } from "@/helpers/RouteName";
-
+import userImage from "../assets/images/download.png";
 const Index = () => {
   const {
     data: blogData,
@@ -32,8 +32,8 @@ const Index = () => {
               blogContent={blog.blogContent}
               title={blog.title}
               category={blog.category.name || "General"}
-              avatar={blog.author.avatar}
-              name={blog.author.name}
+              avatar={blog.author?.avatar || userImage}
+              name={blog.author?.name || "Unknown User"}
             />
           </Link>
         ))

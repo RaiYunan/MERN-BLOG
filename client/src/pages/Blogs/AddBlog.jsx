@@ -84,7 +84,7 @@ const AddBlog = () => {
   }, [titleValue]);
 
   async function onSubmit(values) {
-    const newValues = { ...values, author: user.user?._id };
+    const newValues = { ...values, author: user.user?._id || user.user.data._id };
     console.log(newValues);
     const formData = new FormData();
     if (file) {

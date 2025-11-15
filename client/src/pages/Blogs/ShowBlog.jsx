@@ -111,7 +111,7 @@ const ShowBlog = () => {
 
           <div>
             <span className="text-xs sm:text-sm font-medium text-purple-600 bg-purple-100 px-3 py-1 rounded-full">
-              {blogData?.blog?.author?.name}
+              {blogData?.blog?.author?.name || "Unknown User"}
             </span>
           </div>
 

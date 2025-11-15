@@ -166,15 +166,15 @@ const Comment = ({ blogId, authorId }) => {
               <div className="flex items-center gap-3 mb-0">
                 <Avatar className="w-10 h-10 ">
                   <AvatarImage
-                    src={comment.author.avatar || userImage}
-                    alt={comment.author.name}
+                    src={comment.author?.avatar || userImage}
+                    alt={comment.author?.name || "Unknown User"} 
                     className="object-cover"
                   />
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="text-base font-semibold text-gray-900 truncate">
-                      {comment.author.name}
+                      {comment.author?.name || "Deleted User"}
                     </h3>
                     <span className="text-xs text-gray-500 flex items-center">
                       <GoDotFill className="mx-1" />

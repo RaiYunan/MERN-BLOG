@@ -194,7 +194,7 @@ const CommentsList = () => {
                         </TableCell>
                         <TableCell>{comment.blogId.category.name}</TableCell>
                         {isAdmin && (
-                          <TableCell>{comment.author.name}</TableCell>
+                          <TableCell>{comment.author?.name || "Anonymous"}</TableCell>
                         )}
                         <TableCell>
                           {new Date(comment.createdAt).toLocaleDateString(
@@ -304,7 +304,7 @@ const CommentsList = () => {
                       {isAdmin && (
                         <div className="text-sm">
                           <span className="text-muted-foreground">By: </span>
-                          {comment.author.name}
+                          {comment.author?.name || "Unknown User"}
                         </div>
                       )}
 

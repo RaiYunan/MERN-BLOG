@@ -14,10 +14,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Card } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
-import { RouteSignIn } from "@/helpers/RouteName";
+import { RouteIndex, RouteSignIn } from "@/helpers/RouteName";
 import { showToast } from "@/helpers/showToast";
 import GoogleLogin from "@/components/GoogleLogin";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
+import { ArrowLeft } from "lucide-react";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState({
@@ -81,6 +82,14 @@ const SignUp = () => {
   return (
     <div className="flex items-center justify-center min-h-screen w-screen pt-6">
       <Card className="w-[400px] p-5 ">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute left-4 top-4 cursor-pointer"
+          onClick={() => navigate(RouteIndex)}
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
         <h1 className="text-2xl font-bold text-center">Create your account</h1>
         <div className="">
           <GoogleLogin />
