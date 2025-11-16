@@ -11,6 +11,7 @@ import {
   RouteBlogShow,
   RouteIndex,
 } from "@/helpers/RouteName";
+import userImage from "../assets/images/download.png"
 
 const BlogCardByCategory = () => {
   const { categorySlug } = useParams();
@@ -77,17 +78,17 @@ const BlogCardByCategory = () => {
                   <div className="flex items-center gap-3 mb-4">
                     <Avatar className="w-9 h-9 border-2 border-white shadow-sm">
                       <AvatarImage
-                        src={blog?.author.avatar}
-                        alt={blog?.author.name}
+                        src={blog?.author?.avatar || userImage }
+                        alt={blog?.author?.name}
                         className="object-cover rounded-full"
                       />
                       <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white text-xs">
-                        {getInitials(blog?.author.name)}
+                        {getInitials(blog?.author?.name)}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-sm font-semibold text-gray-900 truncate">
-                        {blog?.author.name}
+                        {blog?.author?.name || "Unknown User"}
                       </h3>
                       <p className="text-xs text-gray-500">Author</p>
                     </div>

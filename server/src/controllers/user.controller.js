@@ -97,19 +97,28 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
 
 export const deleteUser = asyncHandler(async (req, res, next) => {
   const { userId } = req.params;
+
+  const userLikes = await Like.find({ author: userId });
+
+  // Get all like IDs
+  const userLikeIds = userLikes.map((like) => like._id);
+
+  // Remove those likes from blogs
+  await Blog.updateMany(
+    { likes: { $in: userLikeIds } },
+    {
+      $pull: { likes: { $in: userLikeIds } },
+      $inc: { likeCount: -1 }, // careful: this decrements once per blog, not per like
+    }
+  );
+
+  // Delete all Like docs
+  await Like.deleteMany({ author: userId });
+
   const deletedUser = await User.findByIdAndDelete(userId);
   if (!deletedUser) {
     throw new ApiError(404, "User not found.");
   }
-  await Like.deleteMany({ author: userId });
-  // 2. Update blogs to remove user's likes and decrement likeCount
-  await Blog.updateMany(
-    { likes: { $in: [userId] } }, // Find blogs that have this user's likes
-    {
-      $pull: { likes: userId },
-      $inc: { likeCount: -1 }, // Decrement likeCount for each like removed
-    }
-  );
   // 2. Clear cookies (same as logout)
   const options = {
     httpOnly: true,
