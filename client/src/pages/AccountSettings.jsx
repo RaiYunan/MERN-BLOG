@@ -30,8 +30,8 @@ import { useNavigate } from "react-router-dom";
 import { RouteIndex } from "@/helpers/RouteName";
 
 const ChangePassword = () => {
-  const dispatch=useDispatch();
-  const navigate=useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   console.log(user);
   const isGoogleUser =
@@ -51,10 +51,7 @@ const ChangePassword = () => {
       newPassword: z
         .string()
         .min(8, "Password must be at least 8 characters")
-        .regex(/^\S+$/, "Password cannot contain spaces")
-        .regex(/[A-Z]/, "Must contain at least one uppercase letter")
-        .regex(/[a-z]/, "Must contain at least one lowercase letter")
-        .regex(/[0-9]/, "Must contain at least one number"),
+        .regex(/^\S+$/, "Password cannot contain spaces"),
       confirmNewPassword: z.string().min(1, "Please confirm your password"),
     })
     .refine((data) => data.newPassword === data.confirmNewPassword, {
@@ -74,6 +71,17 @@ const ChangePassword = () => {
   function onSubmit(values) {
     console.log("Password change submitted:", values);
     // Add your API call here
+    const {newPassword,currentPassword,confirmNewPassword}=values;
+    if(newPassword===currentPassword){
+      showToast("error", "Your new password cannot be the same as your current password. Please choose a different password.");
+      return;
+    }
+    const dataToSend={
+      newPassword:newPassword,
+      currentPassword:currentPassword
+    }
+
+
   }
 
   // Helper function to toggle password visibility
