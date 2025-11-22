@@ -164,15 +164,15 @@ export const updatePassword = asyncHandler(async (req, res, next) => {
   }
   const { currentPassword, newPassword } = req.body;
 
+  console.log("Cuurent Password:",currentPassword);
+  console.log("New Password:",newPassword)
   const user = await User.findById(userId);
-  if (!(currentPassword == user.password)) {
-    throw new ApiError(400, "Passwords do not match");
+
+  const isCorrect=await user.isPasswordCorrect(currentPassword)
+  if(!isCorrect){
+    throw new ApiError(400,"Your current password is not correct");
   }
-  await User.findByIdAndUpdate(
-    userId,
-    {
-      $set: { password: newPassword },
-    },
-    { new: true }
-  );
+  user.password=newPassword;
+  user.save();
+  res.status(200).json(new ApiResponse(200,{},"Passord updated successfully"))
 });

@@ -68,20 +68,47 @@ const ChangePassword = () => {
     },
   });
 
-  function onSubmit(values) {
+  async function onSubmit(values) {
     console.log("Password change submitted:", values);
     // Add your API call here
-    const {newPassword,currentPassword,confirmNewPassword}=values;
-    if(newPassword===currentPassword){
-      showToast("error", "Your new password cannot be the same as your current password. Please choose a different password.");
+    const { newPassword, currentPassword, confirmNewPassword } = values;
+    if (newPassword === currentPassword) {
+      showToast(
+        "error",
+        "Your new password cannot be the same as your current password. Please choose a different password."
+      );
       return;
     }
-    const dataToSend={
-      newPassword:newPassword,
-      currentPassword:currentPassword
+    const dataToSend = {
+      newPassword: newPassword,
+      currentPassword: currentPassword,
+    };
+    try {
+      const url = `${import.meta.env.VITE_URL}/auth/update-password`;
+      const response = await fetch(url, {
+        method: "PATCH",
+        headers: { "Content-type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(dataToSend),
+      });
+
+      const responseData = await response.json();
+      if (!response.ok) {
+        showToast("error", responseData.message);
+        return;
+      }
+
+      showToast("success", responseData.message);
+      form.reset({
+        currentPassword: "",
+        newPassword: "",
+        confirmNewPassword: "",
+      });
+      navigate(RouteIndex);
+    } catch (error) {
+      console.log("Error while updating password:", error);
+      showToast("error", error.message);
     }
-
-
   }
 
   // Helper function to toggle password visibility
