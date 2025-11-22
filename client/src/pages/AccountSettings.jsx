@@ -42,7 +42,10 @@ const ChangePassword = () => {
     new: false,
     confirm: false,
   });
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState({
+    delete: false,
+    changePassword: false,
+  });
   const [accountToDelete, setAccountToDelete] = useState(null);
 
   const formSchema = z
@@ -61,6 +64,8 @@ const ChangePassword = () => {
 
   const form = useForm({
     resolver: zodResolver(formSchema),
+    mode: "onChange", // ✅ validate as user types
+    reValidateMode: "onChange",
     defaultValues: {
       currentPassword: "",
       newPassword: "",
@@ -68,20 +73,27 @@ const ChangePassword = () => {
     },
   });
 
-  async function onSubmit(values) {
-    console.log("Password change submitted:", values);
-    // Add your API call here
+  async function handleUpdatePassword(values) {
+    if (isGoogleUser) {
+      showToast(
+        "error",
+        "Your account uses Google Sign-In. Password changes must be done in your Google account."
+      );
+      return;
+    }
     const { newPassword, currentPassword, confirmNewPassword } = values;
     if (newPassword === currentPassword) {
       showToast(
         "error",
         "Your new password cannot be the same as your current password. Please choose a different password."
       );
+      setOpen((prev) => ({ ...prev, changePassword: false }));
       return;
     }
     const dataToSend = {
       newPassword: newPassword,
       currentPassword: currentPassword,
+      confirmNewPassword: confirmNewPassword,
     };
     try {
       const url = `${import.meta.env.VITE_URL}/auth/update-password`;
@@ -94,7 +106,9 @@ const ChangePassword = () => {
 
       const responseData = await response.json();
       if (!response.ok) {
+        console.log(responseData.message);
         showToast("error", responseData.message);
+        setOpen((prev) => ({ ...prev, changePassword: false }));
         return;
       }
 
@@ -105,8 +119,10 @@ const ChangePassword = () => {
         confirmNewPassword: "",
       });
       navigate(RouteIndex);
+      setOpen((prev) => ({ ...prev, changePassword: false }));
     } catch (error) {
       console.log("Error while updating password:", error);
+      setOpen((prev) => ({ ...prev, changePassword: false }));
       showToast("error", error.message);
     }
   }
@@ -119,7 +135,49 @@ const ChangePassword = () => {
     }));
   };
 
-  const ConfirmDialog = ({ open, onClose, onConfirm, title, description }) => {
+  const ConfirmDeleteDialog = ({
+    open,
+    onClose,
+    onConfirm,
+    title,
+    description,
+  }) => {
+    return (
+      <Dialog open={open} onOpenChange={onClose}>
+        <DialogContent className="sm:max-w-[400px] px-10 py-12 flex-col gap-6">
+          <DialogHeader>
+            <DialogTitle>{title}</DialogTitle>
+            <DialogDescription>{description}</DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={onClose}
+              className="cursor-pointer"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={onConfirm}
+              className="cursor-pointer"
+            >
+              Confirm
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  };
+
+  const ConfirmChangePasswordDialog = ({
+    open,
+    onClose,
+    onConfirm,
+    title,
+    description,
+  }) => {
     return (
       <Dialog open={open} onOpenChange={onClose}>
         <DialogContent className="sm:max-w-[400px] px-10 py-12 flex-col gap-6">
@@ -151,12 +209,20 @@ const ChangePassword = () => {
 
   const openDeleteDialog = (userId) => {
     setAccountToDelete(userId);
-    setOpen(true);
+    setOpen((prev) => ({ ...prev, delete: true }));
   };
 
   const closeDeleteDialog = () => {
-    setOpen(false);
+    setOpen((prev) => ({ ...prev, delete: false }));
     setAccountToDelete(null);
+  };
+
+  const openUpdateDialog = () => {
+    setOpen((prev) => ({ ...prev, changePassword: true }));
+  };
+
+  const closeUpdateDialog = () => {
+    setOpen((prev) => ({ ...prev, changePassword: false }));
   };
   const handleDelete = async () => {
     if (!accountToDelete) return;
@@ -185,7 +251,7 @@ const ChangePassword = () => {
       // Clear local state and redirect
       dispatch(removeUser());
       setAccountToDelete(null);
-      setOpen(false);
+      setOpen((prev) => ({ ...prev, delete: false }));
       navigate(RouteIndex);
     } catch (error) {
       console.error("Delete account error:", error);
@@ -222,7 +288,7 @@ const ChangePassword = () => {
 
               <Form {...form}>
                 <form
-                  onSubmit={form.handleSubmit(onSubmit)}
+                  onSubmit={form.handleSubmit(handleUpdatePassword)}
                   className="space-y-6"
                 >
                   {/* Current Password */}
@@ -338,8 +404,12 @@ const ChangePassword = () => {
                   />
 
                   <Button
-                    type="submit"
-                    className="w-full bg-blue-600 hover:bg-blue-700 py-2.5 font-medium transition-colors"
+                    type="button"
+                    className="w-full bg-blue-600 hover:bg-blue-700 py-2.5 font-medium transition-colors cursor-pointer"
+                    onClick={openUpdateDialog}
+                    disabled={
+                      !form.formState.isValid || form.formState.isSubmitting
+                    }
                   >
                     Change Password
                   </Button>
@@ -390,7 +460,7 @@ const ChangePassword = () => {
 
           <Button
             variant="destructive"
-            className="w-full bg-red-600 hover:bg-red-700 font-medium"
+            className="w-full bg-red-600 hover:bg-red-700 font-medium cursor-pointer"
             onClick={() =>
               openDeleteDialog(user.user._id || user.user.data._id)
             }
@@ -399,12 +469,19 @@ const ChangePassword = () => {
           </Button>
         </CardContent>
       </Card>
-      <ConfirmDialog
-        open={open}
+      <ConfirmDeleteDialog
+        open={open.delete}
         onClose={closeDeleteDialog}
         onConfirm={handleDelete}
         title="Delete this account?"
         description="This action cannot be undone. The account will be permanently deleted."
+      />
+      <ConfirmChangePasswordDialog
+        open={open.changePassword}
+        onClose={closeUpdateDialog}
+        onConfirm={form.handleSubmit(handleUpdatePassword)}
+        title="Update your account password?"
+        description="This action cannot be undone. The account password will be permanently updated."
       />
     </div>
   );
