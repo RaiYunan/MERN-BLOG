@@ -19,7 +19,7 @@ const app = express();
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: process.env.CLIENT_URL || "*",
     credentials: true,
   })
 );
@@ -33,9 +33,8 @@ app.use(
 );
 app.use(express.static("public"));
 
-
 app.get("/", (req, res) => {
-  res.send("API is running ");
+  res.send("API is running");
 });
 
 // Routers
@@ -67,18 +66,33 @@ app.use((err, req, res, next) => {
   });
 });
 
-
+// Database connection for serverless
 let isDbConnected = false;
 
 async function ensureDb() {
   if (!isDbConnected) {
-    await connectDb();
-    console.log("MONGODB connected");
-    isDbConnected = true;
+    try {
+      await connectDb();
+      console.log("MONGODB connected");
+      isDbConnected = true;
+    } catch (error) {
+      console.error("MongoDB connection failed:", error);
+      throw error;
+    }
   }
 }
 
+// Serverless function handler
 export default async function handler(req, res) {
-  await ensureDb();
-  return app(req, res);
+  try {
+    await ensureDb();
+    return app(req, res);
+  } catch (error) {
+    console.error("Handler error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message
+    });
+  }
 }
