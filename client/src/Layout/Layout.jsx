@@ -1,4 +1,4 @@
-import AppSideBar from "@/components/AppSideBar";
+import AppSideBar from "@/components/AppSidebar";
 import Footer from "@/components/Footer";
 import TopBar from "@/components/TopBar";
 import React, { useState } from "react";

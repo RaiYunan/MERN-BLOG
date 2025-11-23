@@ -17,7 +17,7 @@ import Loading from "./Loading";
 import { useFetch } from "@/hooks/useFetch";
 import { useSelector } from "react-redux";
 
-const AppSideBar = ({ isOpen, onClose }) => {
+const AppSidebar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   const isUser = user && user.isLoggedIn;
@@ -163,4 +163,4 @@ const AppSideBar = ({ isOpen, onClose }) => {
   );
 };
 
-export default AppSideBar;
+export default AppSidebar;
