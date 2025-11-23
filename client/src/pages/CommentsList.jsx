@@ -151,13 +151,13 @@ const CommentsList = () => {
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="text-center">
               <div className="text-xl sm:text-2xl font-bold text-foreground">
-                42
+                {commentsData.length}
               </div>
               <div className="text-xs sm:text-sm">Total</div>
             </div>
             <div className="text-center">
               <div className="text-xl sm:text-2xl font-bold text-green-600">
-                38
+                {commentsData.length}
               </div>
               <div className="text-xs sm:text-sm">Approved</div>
             </div>
