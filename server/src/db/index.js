@@ -7,7 +7,7 @@ export const connectDb = async () => {
       return;
     }
 
-    const uri = `${process.env.MONGO_DB_URI}/${process.env.DB_NAME}?retryWrites=true&w=majority&appName=Cluster0`;
+    const uri = `${process.env.MONGO_DB_URI}/${process.env.DB_NAME}`;
 
     const connectionInstance = await mongoose.connect(uri, {
       serverSelectionTimeoutMS: 10000,
