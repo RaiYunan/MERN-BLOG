@@ -17,9 +17,31 @@ dotenv.config({
 const app = express();
 
 app.use(cookieParser());
+
+// Updated CORS configuration
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://mern-blog-mzrc.vercel.app",
+  process.env.CLIENT_URL,
+];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "*",
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+      
+      // Check if origin is allowed or is a Vercel preview deployment
+      if (
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".vercel.app")
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
