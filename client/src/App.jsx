@@ -19,7 +19,7 @@ import {
   RouteSignIn,
   RouteSignUp,
 } from "./helpers/RouteName";
-import Index from "./pages";
+import Index from "./pages/Index";
 import SignIn from "./pages/Signin";
 import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
