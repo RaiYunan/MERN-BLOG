@@ -31,15 +31,12 @@ app.get("/", (req, res) => {
 
 
 connectDb()
-.then(() => {
-    app.listen(port, () => {
-        console.log(`Server running on http://localhost:${port}`);
-    });
-})
-.catch((err) => {
-    console.log(" MONGODB Connection failed:", err);
-    process.exit(1);
-});
+  .then(() => {
+    console.log("MONGODB connected");
+  })
+  .catch((err) => {
+    console.log("MONGODB connection failed:", err);
+  });
 
 import authRouter from "./routes/auth.routes.js"
 import userRouter from "./routes/user.route.js"
